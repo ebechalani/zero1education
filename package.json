@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "check:env": "tsx scripts/check-env.ts",
+    "users:list": "tsx scripts/list-users.ts",
     "seed:curriculum": "tsx scripts/seed-curriculum.ts",
     "seed:school": "tsx scripts/seed-school.ts",
     "set-claims": "tsx scripts/set-claims.ts",

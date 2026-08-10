@@ -54,7 +54,22 @@ export function adminApp(): App {
   return app;
 }
 
-export const adminDb = () => getFirestore(adminApp());
+let db: ReturnType<typeof getFirestore> | undefined;
+
+/**
+ * Firestore ignores undefined values here on purpose: the content types use
+ * optional fields (tagline, bookRef, icon…), and an absent optional should
+ * simply not be written rather than blowing up the whole seed.
+ * settings() must be called before the first use, hence the memoised instance.
+ */
+export const adminDb = () => {
+  if (!db) {
+    db = getFirestore(adminApp());
+    db.settings({ ignoreUndefinedProperties: true });
+  }
+  return db;
+};
+
 export const adminAuth = () => getAuth(adminApp());
 
 export function logStep(message: string) {
