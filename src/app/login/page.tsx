@@ -227,8 +227,7 @@ export default function LoginPage() {
           </div>
 
           <p className="font-mono text-[11px] tracking-wide text-ink-400">
-            Grade 0 → Grade 12 · ~60 units · 4 learning worlds · books by Eddy
-            Bachaalany
+            Grade 0 → Grade 12 · ~60 units · 4 learning worlds
           </p>
         </div>
       </aside>

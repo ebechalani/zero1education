@@ -753,7 +753,7 @@ export default function HomePage() {
         <SectionHead
           eyebrow="Book integration"
           title="The printed page opens the platform"
-          description="Books authored by Eddy Bachaalany carry QR codes beside the activities they belong to. Scanning one lands the student on exactly the right lab, lesson, challenge or checkpoint — no searching, no account hunting."
+          description="The printed books carry QR codes beside the activities they belong to. Scanning one lands the student on exactly the right lab, lesson, challenge or checkpoint — no searching, no account hunting."
         />
         <div className="rounded-lg border border-ink-100 bg-white p-6 shadow-card lg:p-8">
           <div className="grid items-center gap-6 lg:grid-cols-[auto_auto_1fr] lg:gap-8">

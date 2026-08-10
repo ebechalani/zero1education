@@ -133,9 +133,8 @@ export default function AboutPage() {
           A whole ICT curriculum, rebuilt as software
         </h1>
         <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-ink-500">
-          ZERO1 Education started from a written Grade&nbsp;0–12 ICT curriculum by{" "}
-          <strong className="font-semibold text-ink-700">Eddy Bachaalany</strong> and
-          the printed 2023 edition built on it. The books already worked in
+          ZERO1 Education started from a written Grade&nbsp;0–12 ICT curriculum
+          and the printed 2023 edition built on it. The books already worked in
           classrooms. What was missing was everything a screen can do that paper
           cannot.
         </p>

@@ -88,10 +88,8 @@ export default function BooksPage() {
             </h1>
             <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-ink-500">
               The ZERO1 ICT series was written, taught and printed as a full
-              Kindergarten-to-Grade-12 programme by{" "}
-              <strong className="font-semibold text-ink-700">Eddy Bachaalany</strong>.
-              The platform did not replace those books — it gave every page
-              somewhere to go.
+              Kindergarten-to-Grade-12 programme. The platform did not replace
+              those books — it gave every page somewhere to go.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
               <Button href="/curriculum" iconRight={<ArrowRight />}>
