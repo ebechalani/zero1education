@@ -1,0 +1,76 @@
+rules_version = '2';
+
+// ZERO1 Education — Cloud Storage rules (docs/FIREBASE.md §5).
+// Bucket paths mirror the Firestore tenant model: schools/{schoolId}/... and
+// the same custom claims decide access. Uploads are capped and MIME-limited
+// here; a Function re-encodes images (stripping EXIF) after the write.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ── Identity helpers (same claims as Firestore) ─────────────────────────
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function claims() {
+      return request.auth.token;
+    }
+
+    function hasRole(role) {
+      return signedIn() && claims().role == role;
+    }
+
+    function inSchool(schoolId) {
+      return signedIn() && claims().schoolId == schoolId;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // ── Upload constraints ──────────────────────────────────────────────────
+
+    function underSizeCap() {
+      return request.resource.size <= 25 * 1024 * 1024;
+    }
+
+    // Raster images, PDF, plain text and zipped project folders — nothing else.
+    // SVG is deliberately excluded: it can carry script and these files are
+    // served back to other students.
+    function allowedType() {
+      return request.resource.contentType.matches('image/(png|jpeg|gif|webp|heic)')
+        || request.resource.contentType == 'application/pdf'
+        || request.resource.contentType == 'text/plain'
+        || request.resource.contentType == 'application/zip'
+        || request.resource.contentType == 'application/x-zip-compressed';
+    }
+
+    // request.resource is null on delete — nothing to validate then.
+    function isDelete() {
+      return request.resource == null;
+    }
+
+    // ── Assignment submissions ──────────────────────────────────────────────
+    // The student owns their files; the class teacher and the school admin may
+    // read them for grading. File names are generated ids — the original name
+    // travels in object metadata.
+
+    match /schools/{schoolId}/submissions/{uid}/{assignmentId}/{fileName} {
+      allow read: if hasRole('zero1_admin')
+        || (inSchool(schoolId)
+            && (isSelf(uid) || hasRole('teacher') || hasRole('school_admin')));
+
+      allow write: if inSchool(schoolId)
+        && isSelf(uid)
+        && (isDelete() || (underSizeCap() && allowedType()));
+    }
+
+    // ── Default deny ────────────────────────────────────────────────────────
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

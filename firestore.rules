@@ -1,0 +1,462 @@
+rules_version = '2';
+
+// ZERO1 Education — multi-tenant Firestore security rules.
+// Implements docs/FIREBASE.md §4. Authorisation is driven by custom claims
+// ({ role, schoolId }) stamped by the stampClaims Function — never by client
+// data — so a tampered client can never escalate. Every tenant-scoped rule
+// starts with inSchool(): cross-school access is impossible, including for
+// school admins. Cloud Functions use the Admin SDK and bypass these rules,
+// which is what lets XP, levels, mastery and analytics stay server-owned.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Identity helpers ────────────────────────────────────────────────────
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function claims() {
+      return request.auth.token;
+    }
+
+    function hasRole(role) {
+      return signedIn() && claims().role == role;
+    }
+
+    function inSchool(schoolId) {
+      return signedIn() && claims().schoolId == schoolId;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function isZero1() {
+      return hasRole('zero1_admin');
+    }
+
+    // ── Field allow-lists ───────────────────────────────────────────────────
+    // createsOnly caps the shape of a new doc; writesOnly caps which fields an
+    // update may touch. Using affectedKeys on update matters: a doc also holds
+    // function-written fields the client must not clear but does not send.
+
+    function createsOnly(allowed) {
+      return request.resource.data.keys().hasOnly(allowed);
+    }
+
+    function writesOnly(allowed) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(allowed);
+    }
+
+    function immutableField(field) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny([field]);
+    }
+
+    // ── Membership helpers (one get() each, cached per request) ─────────────
+
+    function classDoc(classId) {
+      return get(/databases/$(database)/documents/classes/$(classId)).data;
+    }
+
+    function classExists(classId) {
+      return classId != null && exists(/databases/$(database)/documents/classes/$(classId));
+    }
+
+    function teachesClass(classId) {
+      return hasRole('teacher')
+        && classExists(classId)
+        && classDoc(classId).teacherIds.hasAny([request.auth.uid]);
+    }
+
+    function inClass(classId) {
+      return signedIn()
+        && classExists(classId)
+        && classDoc(classId).studentIds.hasAny([request.auth.uid]);
+    }
+
+    function myClassIds() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.classIds;
+    }
+
+    // A teacher may see a student who shares at least one of their classes.
+    function teachesStudent(studentUid) {
+      return hasRole('teacher')
+        && exists(/databases/$(database)/documents/users/$(studentUid))
+        && get(/databases/$(database)/documents/users/$(studentUid)).data.classIds.hasAny(myClassIds());
+    }
+
+    // ── users ───────────────────────────────────────────────────────────────
+    // Read self; teachers read students of their classes; school_admin is
+    // school-bound; zero1_admin is global. Role and schoolId are claim-backed,
+    // so only staff may move a user between them.
+
+    match /users/{uid} {
+      allow read: if isZero1()
+        || isSelf(uid)
+        || (inSchool(resource.data.schoolId)
+            && (hasRole('school_admin') || teachesStudent(uid)));
+
+      allow create: if isZero1()
+        || (hasRole('school_admin') && inSchool(request.resource.data.schoolId));
+
+      allow update: if isZero1()
+        || (hasRole('school_admin')
+            && inSchool(resource.data.schoolId)
+            && inSchool(request.resource.data.schoolId))
+        || (isSelf(uid)
+            && writesOnly(['firstName', 'lastName', 'avatarHue', 'title', 'lastLogin']));
+
+      allow delete: if isZero1();
+    }
+
+    // ── schools ─────────────────────────────────────────────────────────────
+    // Members read their own school. Plan, seats and status are commercial
+    // fields — ZERO1 owns them; a school admin may only edit presentation.
+
+    match /schools/{schoolId} {
+      allow read: if isZero1() || inSchool(schoolId);
+
+      allow update: if isZero1()
+        || (hasRole('school_admin')
+            && inSchool(schoolId)
+            && writesOnly(['name', 'city', 'country', 'branding']));
+
+      allow create, delete: if isZero1();
+    }
+
+    // ── classes ─────────────────────────────────────────────────────────────
+    // Visible to its teachers, its students and the school admin. Roster and
+    // staffing changes belong to the school admin.
+
+    match /classes/{classId} {
+      allow read: if isZero1()
+        || (inSchool(resource.data.schoolId)
+            && (hasRole('school_admin')
+                || resource.data.teacherIds.hasAny([request.auth.uid])
+                || resource.data.studentIds.hasAny([request.auth.uid])));
+
+      allow create: if isZero1()
+        || (hasRole('school_admin') && inSchool(request.resource.data.schoolId));
+
+      allow update: if isZero1()
+        || (hasRole('school_admin')
+            && inSchool(resource.data.schoolId)
+            && immutableField('schoolId'));
+
+      allow delete: if isZero1()
+        || (hasRole('school_admin') && inSchool(resource.data.schoolId));
+    }
+
+    // ── licenses ────────────────────────────────────────────────────────────
+    // A school admin sees their own seats; only ZERO1 issues or changes them.
+
+    match /licenses/{licenseId} {
+      allow read: if isZero1()
+        || (inSchool(resource.data.schoolId) && hasRole('school_admin'));
+
+      allow write: if isZero1();
+    }
+
+    // ── Published curriculum (global, authored by ZERO1) ────────────────────
+    // Read-only for every school; only zero1_admin writes. Draft and
+    // coming-soon records stay invisible until published.
+
+    match /grades/{gradeId} {
+      allow read: if isZero1() || (signedIn() && resource.data.status == 'published');
+      allow write: if isZero1();
+    }
+
+    match /units/{unitId} {
+      allow read: if isZero1() || (signedIn() && resource.data.status == 'published');
+      allow write: if isZero1();
+    }
+
+    match /lessons/{lessonId} {
+      allow read: if isZero1() || (signedIn() && resource.data.status == 'published');
+      allow write: if isZero1();
+
+      // Immutable published snapshots for rollback and audit — append-only,
+      // and never exposed to schools (the live lesson doc is what they read).
+      match /versions/{versionId} {
+        allow read, create: if isZero1();
+        allow update, delete: if false;
+      }
+    }
+
+    match /labs/{labId} {
+      allow read: if signedIn();
+      allow write: if isZero1();
+    }
+
+    match /questionBank/{questionId} {
+      // Answer keys live here — teachers and above only, never students.
+      allow read: if isZero1() || hasRole('teacher') || hasRole('school_admin');
+      allow write: if isZero1();
+    }
+
+    match /skills/{skillId} {
+      allow read: if signedIn();
+      allow write: if isZero1();
+    }
+
+    match /badges/{badgeId} {
+      allow read: if signedIn();
+      allow write: if isZero1();
+    }
+
+    match /qrCodes/{code} {
+      // Printed-book deep links. Anonymous scans resolve through the resolveQr
+      // Function, which is why no unauthenticated read is granted here.
+      allow read: if signedIn();
+      allow write: if isZero1();
+    }
+
+    // ── progress ────────────────────────────────────────────────────────────
+    // One doc per student per lesson, id = {uid}_{lessonId}. Students write
+    // their own stage/activity state only. XP, level, mastery and badges are
+    // absent from the allow-list: they are computed by onProgressEvent, so a
+    // student can never grant themselves progress they did not earn.
+
+    function progressClientFields() {
+      return ['uid', 'schoolId', 'classId', 'lessonId', 'stageStates',
+              'activityResults', 'labsDone', 'timeSpentSec', 'startedAt',
+              'completedAt', 'updatedAt'];
+    }
+
+    match /progress/{progressId} {
+      allow read: if isZero1()
+        || (inSchool(resource.data.schoolId)
+            && (isSelf(resource.data.uid)
+                || hasRole('school_admin')
+                || teachesClass(resource.data.classId)));
+
+      allow create: if inSchool(request.resource.data.schoolId)
+        && isSelf(request.resource.data.uid)
+        && progressId == request.resource.data.uid + '_' + request.resource.data.lessonId
+        && createsOnly(progressClientFields());
+
+      allow update: if inSchool(resource.data.schoolId)
+        && isSelf(resource.data.uid)
+        && immutableField('uid')
+        && immutableField('schoolId')
+        && writesOnly(progressClientFields());
+
+      allow delete: if isZero1();
+    }
+
+    // ── progressEvents ──────────────────────────────────────────────────────
+    // Append-only stream and the single source of truth for XP. The client
+    // reports *what happened*; xp and skillDeltas are stamped by the Function,
+    // which is why neither appears in the allow-list. Nothing is ever mutated.
+
+    match /progressEvents/{eventId} {
+      allow read: if isZero1()
+        || (inSchool(resource.data.schoolId)
+            && (isSelf(resource.data.uid)
+                || hasRole('school_admin')
+                || teachesClass(resource.data.classId)));
+
+      allow create: if inSchool(request.resource.data.schoolId)
+        && isSelf(request.resource.data.uid)
+        && request.resource.data.ts == request.time
+        && createsOnly(['uid', 'schoolId', 'classId', 'lessonId', 'type',
+                        'stageId', 'activityId', 'labId', 'attempts', 'score',
+                        'timeSpentSec', 'ts']);
+
+      allow update, delete: if false;
+    }
+
+    // ── studentSkills ───────────────────────────────────────────────────────
+    // skillId → { level, trend }, rebuilt from progressEvents. The student may
+    // bootstrap the doc but never touch `levels`.
+
+    match /studentSkills/{uid} {
+      allow read: if isZero1()
+        || (inSchool(resource.data.schoolId)
+            && (isSelf(uid) || hasRole('school_admin') || teachesStudent(uid)));
+
+      allow create: if inSchool(request.resource.data.schoolId)
+        && isSelf(uid)
+        && request.resource.data.uid == uid
+        && createsOnly(['uid', 'schoolId', 'updatedAt']);
+
+      allow update: if inSchool(resource.data.schoolId)
+        && isSelf(uid)
+        && writesOnly(['updatedAt']);
+
+      allow delete: if isZero1();
+    }
+
+    // ── studentSummaries ────────────────────────────────────────────────────
+    // The 1-read dashboard doc. xp, level, streakDays, missionsCompleted,
+    // skillsMastered and badges are all function-written; the client may only
+    // mark itself active today.
+
+    match /studentSummaries/{uid} {
+      allow read: if isZero1()
+        || (inSchool(resource.data.schoolId)
+            && (isSelf(uid) || hasRole('school_admin') || teachesStudent(uid)));
+
+      allow create: if inSchool(request.resource.data.schoolId)
+        && isSelf(uid)
+        && request.resource.data.uid == uid
+        && createsOnly(['uid', 'schoolId', 'lastActiveDay', 'updatedAt']);
+
+      allow update: if inSchool(resource.data.schoolId)
+        && isSelf(uid)
+        && writesOnly(['lastActiveDay', 'updatedAt']);
+
+      allow delete: if isZero1();
+    }
+
+    // ── assignments + submissions ───────────────────────────────────────────
+    // Teachers own class-scoped assignments; students read the ones set for
+    // their class and write only their own submission, only before lockedAt.
+
+    match /assignments/{assignmentId} {
+      allow read: if isZero1()
+        || (inSchool(resource.data.schoolId)
+            && (teachesClass(resource.data.classId)
+                || hasRole('school_admin')
+                || inClass(resource.data.classId)));
+
+      allow create: if inSchool(request.resource.data.schoolId)
+        && teachesClass(request.resource.data.classId);
+
+      allow update: if inSchool(resource.data.schoolId)
+        && teachesClass(resource.data.classId)
+        && immutableField('schoolId')
+        && immutableField('classId');
+
+      allow delete: if inSchool(resource.data.schoolId)
+        && teachesClass(resource.data.classId);
+
+      match /submissions/{studentUid} {
+
+        function assignmentDoc() {
+          return get(/databases/$(database)/documents/assignments/$(assignmentId)).data;
+        }
+
+        // Open until the teacher locks the assignment.
+        function beforeLock() {
+          return !('lockedAt' in assignmentDoc()) || request.time < assignmentDoc().lockedAt;
+        }
+
+        function submissionClientFields() {
+          return ['uid', 'schoolId', 'classId', 'assignmentId', 'submitType',
+                  'text', 'links', 'files', 'status', 'submittedAt', 'updatedAt'];
+        }
+
+        allow read: if isZero1()
+          || (inSchool(resource.data.schoolId)
+              && (isSelf(studentUid)
+                  || teachesClass(resource.data.classId)
+                  || hasRole('school_admin')));
+
+        allow create: if inSchool(request.resource.data.schoolId)
+          && isSelf(studentUid)
+          && request.resource.data.uid == studentUid
+          && beforeLock()
+          && request.resource.data.status in ['draft', 'submitted']
+          && createsOnly(submissionClientFields());
+
+        // Students revise their own work before the lock; teachers grade after.
+        allow update: if inSchool(resource.data.schoolId)
+          && ((isSelf(studentUid)
+               && beforeLock()
+               && request.resource.data.status in ['draft', 'submitted']
+               && immutableField('uid')
+               && writesOnly(submissionClientFields()))
+              || (teachesClass(resource.data.classId)
+                  && writesOnly(['status', 'grade', 'feedback', 'gradedAt', 'gradedBy'])));
+
+        allow delete: if isZero1();
+      }
+    }
+
+    // ── liveSessions (Launch to Class) ──────────────────────────────────────
+    // The teacher of the class owns the session; a student may update exactly
+    // their own entry in the participants map and nothing else.
+
+    match /liveSessions/{sessionId} {
+      allow read: if isZero1()
+        || (inSchool(resource.data.schoolId)
+            && (teachesClass(resource.data.classId) || inClass(resource.data.classId)));
+
+      allow create: if inSchool(request.resource.data.schoolId)
+        && teachesClass(request.resource.data.classId);
+
+      allow update: if inSchool(resource.data.schoolId)
+        && (teachesClass(resource.data.classId)
+            || (inClass(resource.data.classId)
+                && writesOnly(['participants'])
+                && request.resource.data.participants
+                     .diff(resource.data.participants)
+                     .affectedKeys().hasOnly([request.auth.uid])));
+
+      allow delete: if inSchool(resource.data.schoolId)
+        && teachesClass(resource.data.classId);
+    }
+
+    // ── portfolios ──────────────────────────────────────────────────────────
+    // Owned by the student. Showcasing is opt-in by the student and approved
+    // by the school — the approval field is staff-only (docs/FIREBASE.md §6).
+
+    match /portfolios/{uid} {
+      allow read: if isZero1()
+        || (inSchool(resource.data.schoolId)
+            && (isSelf(uid) || hasRole('school_admin') || teachesStudent(uid)));
+
+      allow create: if inSchool(request.resource.data.schoolId)
+        && isSelf(uid)
+        && request.resource.data.uid == uid
+        && createsOnly(['uid', 'schoolId', 'items', 'showcaseOptIn', 'updatedAt']);
+
+      allow update: if (inSchool(resource.data.schoolId)
+                        && isSelf(uid)
+                        && writesOnly(['items', 'showcaseOptIn', 'updatedAt']))
+        || (inSchool(resource.data.schoolId)
+            && hasRole('school_admin')
+            && writesOnly(['showcaseApproved', 'reviewedAt', 'reviewedBy']));
+
+      allow delete: if isZero1();
+    }
+
+    // ── notifications ───────────────────────────────────────────────────────
+    // Function-generated; the recipient may only mark one read or dismiss it.
+
+    match /notifications/{notifId} {
+      allow read: if isZero1()
+        || (inSchool(resource.data.schoolId) && isSelf(resource.data.uid));
+
+      allow create: if false;
+
+      allow update: if inSchool(resource.data.schoolId)
+        && isSelf(resource.data.uid)
+        && writesOnly(['readAt']);
+
+      allow delete: if inSchool(resource.data.schoolId) && isSelf(resource.data.uid);
+    }
+
+    // ── classAnalytics ──────────────────────────────────────────────────────
+    // Pre-aggregated per class per unit by aggregateClassAnalytics. Read-only
+    // to every client so teacher dashboards cost one read and cannot be forged.
+
+    match /classAnalytics/{analyticsId} {
+      allow read: if isZero1()
+        || (inSchool(resource.data.schoolId)
+            && (teachesClass(resource.data.classId) || hasRole('school_admin')));
+
+      allow write: if false;
+    }
+
+    // ── Default deny ────────────────────────────────────────────────────────
+    // Anything not matched above is closed, including future collections.
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
