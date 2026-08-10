@@ -60,6 +60,7 @@ Cybersecurity.
 
 Read these before changing anything structural:
 
+- [docs/SETUP.md](docs/SETUP.md) — connect Firebase and publish, step by step
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — product & content architecture, engines, routing, folders
 - [docs/DESIGN-SYSTEM.md](docs/DESIGN-SYSTEM.md) — brand, color, type, motion, component inventory
 - [docs/FIREBASE.md](docs/FIREBASE.md) — Firestore model, security rules, production wiring
@@ -82,6 +83,9 @@ src/
 ```
 
 ## Going live with Firebase
+
+> **New here? Follow [docs/SETUP.md](docs/SETUP.md)** — the click-by-click walkthrough for
+> connecting Firebase and publishing the site. The summary below is the short version.
 
 The app runs on Firebase the moment it's configured — auth, Firestore reads and progress
 writes all switch adapters automatically. Nothing in the UI changes.
