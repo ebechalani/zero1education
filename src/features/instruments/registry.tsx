@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 import { exercisesForLesson } from "@/features/microbit/exercises";
+import { exercisesForLesson as drawExercisesForLesson } from "@/features/draw/exercises";
 import type { ComponentType } from "react";
 
 /**
@@ -57,6 +58,11 @@ const MicrobitStudio = dynamic(
   { ssr: false, loading },
 );
 
+const DrawStudio = dynamic(
+  () => import("@/features/draw/draw-studio").then((m) => m.DrawStudio),
+  { ssr: false, loading },
+);
+
 export const INSTRUMENTS: InstrumentMeta[] = [
   {
     unitId: "g6-microbit",
@@ -72,6 +78,22 @@ export const INSTRUMENTS: InstrumentMeta[] = [
         title: e.title,
         brief: e.brief,
         href: `/microbit?exercise=${e.id}`,
+      })),
+  },
+  {
+    unitId: "g6-cartoon",
+    label: "Drawing Studio",
+    icon: "Brush",
+    route: "/draw",
+    teachHint:
+      "Step through the drawing on the board and fade the guide lines in and out, so the class sees the shapes underneath before the detail goes on.",
+    Component: DrawStudio,
+    listExercises: (lessonId) =>
+      drawExercisesForLesson(lessonId).map((e) => ({
+        id: e.id,
+        title: e.title,
+        brief: e.brief,
+        href: `/draw?exercise=${e.id}`,
       })),
   },
 ];
