@@ -19,6 +19,9 @@ import { AlgorithmLab } from "./algorithm-lab";
 import { NetworkLab } from "./network-lab";
 import { CyberLab } from "./cyber-lab";
 import { LogicLab } from "./logic-lab";
+import { WebLab } from "./web-lab";
+import { PythonLab } from "./python-lab";
+import { DatabaseLab } from "./database-lab";
 
 export interface LabProps {
   config?: LabConfig;
@@ -102,25 +105,28 @@ export const LAB_REGISTRY: Record<LabId, LabMeta> = {
   web: {
     id: "web",
     name: "Web Lab",
-    blurb: "Write HTML & CSS with a live preview. In development.",
+    blurb: "Write real HTML, CSS and JavaScript and watch the page change as you type.",
     icon: <Braces className="size-5" />,
-    skillIds: ["web-html"],
+    component: WebLab as ComponentType<LabProps>,
+    skillIds: ["web-html", "cr-projects"],
     gradeRange: "Grades 7–12",
   },
   python: {
     id: "python",
     name: "Python Lab",
-    blurb: "A browser Python editor with tests and hints. In development.",
+    blurb: "Write and run genuine Python in the browser — with errors explained in plain English.",
     icon: <Bot className="size-5" />,
-    skillIds: ["prog-python"],
+    component: PythonLab as ComponentType<LabProps>,
+    skillIds: ["prog-python", "algo-iteration"],
     gradeRange: "Grades 7–12",
   },
   database: {
     id: "database",
     name: "Database Lab",
-    blurb: "Tables, records and first queries. In development.",
+    blurb: "Explore a real school database and query it with SQL — joins, filters and all.",
     icon: <Database className="size-5" />,
-    skillIds: ["data-analysis"],
+    component: DatabaseLab as ComponentType<LabProps>,
+    skillIds: ["data-analysis", "ct-abstraction"],
     gradeRange: "Grades 9–12",
   },
 };

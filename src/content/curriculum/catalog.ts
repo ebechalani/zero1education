@@ -83,18 +83,35 @@ export const CATALOG: Unit[] = [
     skillIds: ["sys-hardware", "sys-io", "data-binary", "algo-sequence", "algo-selection", "net-devices", "net-internet", "cyber-phishing", "cyber-passwords"],
     lessonIds: ["g6-idw-systems", "g6-idw-binary", "g6-idw-algorithms", "g6-idw-networks", "g6-idw-cyber"],
   }),
-  u(6, 2, "microbit", "MakeCode for micro:bit", "Micro-controllers, IoT and the 25-LED matrix — from the printed Chapter 1.", {
-    bookRef: "G6 CH1", icon: "CircuitBoard", plannedLessons: 10,
-    skillIds: ["pc-microbit", "prog-blocks", "sys-hardware"],
+  u(6, 2, "microbit", "MakeCode for micro:bit", "Micro-controllers, IoT and the 25-LED matrix — the printed Chapter 1, lesson for lesson.", {
+    bookRef: "G6 CH1", icon: "CircuitBoard", status: "published",
+    tagline: "Converted from the printed edition",
+    skillIds: ["pc-microbit", "prog-blocks", "sys-hardware", "sys-io", "algo-iteration", "algo-selection"],
     lessonIds: [
       "g6-mb-01", "g6-mb-02", "g6-mb-03", "g6-mb-04", "g6-mb-05",
       "g6-mb-06", "g6-mb-07", "g6-mb-08", "g6-mb-09", "g6-mb-10",
     ],
   }),
-  u(6, 3, "excel", "Excel", "Organize, calculate and chart real data.", { bookRef: "G6 CH2", icon: "Table", plannedLessons: 8, skillIds: ["data-analysis"] }),
-  u(6, 4, "cartoon", "Cartoon Animation", "Bring characters to life frame by frame.", { bookRef: "G6 CH3", icon: "Clapperboard", plannedLessons: 6, skillIds: ["cr-projects"] }),
-  u(6, 5, "robotics", "Robotics", "Program robots to sense and react.", { bookRef: "G6 CH4", icon: "Bot", plannedLessons: 8, skillIds: ["rob-build", "prog-blocks"] }),
-  u(6, 6, "scratch", "Scratch", "Design complete games with sprites and logic.", { bookRef: "G6 CH5", icon: "Blocks", plannedLessons: 8, skillIds: ["prog-blocks", "algo-iteration"] }),
+  u(6, 3, "excel", "Microsoft Excel", "Build and format tables, then calculate with formulas and the IF function.", {
+    bookRef: "G6 CH2", icon: "Table", plannedLessons: 7,
+    skillIds: ["data-analysis", "dl-files"],
+    lessonIds: ["g6-xl-01", "g6-xl-02", "g6-xl-03", "g6-xl-04", "g6-xl-05", "g6-xl-06", "g6-xl-07"],
+  }),
+  u(6, 4, "cartoon", "Cartoon Drawing", "Draw superhero characters step by step in Paint — bodies, poses and costumes.", {
+    bookRef: "G6 CH3", icon: "Brush", plannedLessons: 5,
+    skillIds: ["cr-projects", "dl-files"],
+    lessonIds: ["g6-ct-01", "g6-ct-02", "g6-ct-03", "g6-ct-04", "g6-ct-05"],
+  }),
+  u(6, 5, "robotics", "Robotics with mBot2", "Smart bins, smart homes, autonomous driving and client counting with the CyberPi controller.", {
+    bookRef: "G6 CH4", icon: "Bot", plannedLessons: 7,
+    skillIds: ["rob-build", "sys-io", "prog-blocks"],
+    lessonIds: ["g6-rb-01", "g6-rb-02", "g6-rb-03", "g6-rb-04", "g6-rb-05", "g6-rb-06", "g6-rb-07"],
+  }),
+  u(6, 6, "scratch", "Scratch", "Stories, documentaries, animations and games built in Scratch 3.0.", {
+    bookRef: "G6 CH5", icon: "Blocks", plannedLessons: 7,
+    skillIds: ["prog-blocks", "algo-iteration", "cr-projects"],
+    lessonIds: ["g6-sc-01", "g6-sc-02", "g6-sc-03", "g6-sc-04", "g6-sc-05", "g6-sc-06", "g6-sc-07"],
+  }),
 
   // ── Grade 7 ───────────────────────────────────────────────────────────────
   u(7, 1, "photoshop", "Photoshop", "Photo editing, layers and digital design.", { bookRef: "G7 CH2", icon: "Image", skillIds: ["cr-projects"] }),

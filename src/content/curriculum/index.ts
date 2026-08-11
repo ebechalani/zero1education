@@ -5,7 +5,9 @@ import { lessonBinary } from "./grade-6/idw/binary";
 import { lessonAlgorithms } from "./grade-6/idw/algorithms";
 import { lessonNetworks } from "./grade-6/idw/networks";
 import { lessonCyber } from "./grade-6/idw/cyber";
-import { microbitLessons } from "./grade-6/microbit-lessons";
+import { microbitLessons } from "./grade-6/microbit";
+import { excelLessons, cartoonLessons } from "./grade-6/ch2-ch3-lessons";
+import { roboticsLessons, scratchLessons } from "./grade-6/ch4-ch5-lessons";
 
 /**
  * Content service (bundled adapter). In production these functions are backed
@@ -21,7 +23,14 @@ export const IDW_LESSONS: Lesson[] = [
   lessonCyber,
 ];
 
-export const ALL_LESSONS: Lesson[] = [...IDW_LESSONS, ...microbitLessons];
+export const ALL_LESSONS: Lesson[] = [
+  ...IDW_LESSONS,
+  ...microbitLessons,
+  ...excelLessons,
+  ...cartoonLessons,
+  ...roboticsLessons,
+  ...scratchLessons,
+];
 
 const lessonById = new Map(ALL_LESSONS.map((l) => [l.id, l]));
 
