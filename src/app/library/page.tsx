@@ -3,10 +3,11 @@
 import { Chip } from "@/components/ui/chip";
 import { WorldBadge } from "@/components/brand/world-badge";
 import { CATALOG, lessonsForUnit } from "@/content/curriculum";
+import { chapterForUnit } from "@/content/books";
 import { GRADES, worldForGrade } from "@/lib/worlds";
 import { cn } from "@/lib/utils";
 import * as Icons from "lucide-react";
-import { BookOpen, ChevronRight, Library, Lock } from "lucide-react";
+import { BookMarked, BookOpen, ChevronRight, Library, Lock } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -113,6 +114,15 @@ export default function LibraryPage() {
                   </div>
                   <p className="mt-1 text-[13.5px] text-ink-500">{unit.summary}</p>
                 </div>
+                {chapterForUnit(unit.id) && (
+                  <Link
+                    href={`/library/original/${chapterForUnit(unit.id)!.id}`}
+                    className="flex shrink-0 items-center gap-1.5 rounded-md border border-bit-300 bg-bit-50 px-3 py-1.5 text-[13px] font-semibold text-bit-700 transition-colors hover:bg-bit-100"
+                  >
+                    <BookMarked className="size-3.5" />
+                    Original pages
+                  </Link>
+                )}
               </div>
 
               {lessons.length > 0 && (

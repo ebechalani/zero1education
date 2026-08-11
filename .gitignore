@@ -44,3 +44,10 @@ service-account.json
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Original printed book PDFs — the author's copyrighted material.
+# Deliberately NOT committed: this repo is public, and committing them would
+# make the books freely downloadable by anyone. Serve them from Firebase
+# Storage behind authentication instead (docs/FIREBASE.md), or place them
+# locally in public/books/ for offline review.
+public/books/**/*.pdf
