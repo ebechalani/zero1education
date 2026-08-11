@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useProgress } from "@/stores/progress-store";
 import { chapterById } from "@/content/books";
+import { exercisesForLesson } from "@/features/microbit/exercises";
 import { BlockRenderer, type BlockContext } from "@/features/mission/block-renderer";
 import { STAGE_META } from "@/features/mission/mission-player";
 import { PdfPageViewer } from "./pdf-page-viewer";
@@ -18,6 +19,7 @@ import {
   BookOpen,
   Check,
   ChevronDown,
+  CircuitBoard,
   PanelRightClose,
   PanelRightOpen,
   Target,
@@ -51,6 +53,7 @@ export function BookLessonPlayer({
   const [open, setOpen] = useState<Set<string>>(new Set());
   const anchor = lesson.bookAnchor;
   const chapter = anchor ? chapterById(anchor.chapterId) : undefined;
+  const mbExercises = exercisesForLesson(lesson.id);
   const progress = hydrated ? store.lessons[lesson.id] : undefined;
 
   // Every interactive block in the lesson, in stage order
@@ -215,11 +218,43 @@ export function BookLessonPlayer({
           )}
         </div>
 
-        {showPanel && activities.length > 0 && (
+        {showPanel && (activities.length > 0 || mbExercises.length > 0) && (
           <aside className="thin-scroll lg:h-[calc(100vh-13rem)] lg:overflow-y-auto">
-            <p className="mb-2.5 text-[11px] font-bold tracking-wide text-ink-400 uppercase">
-              Practise what this lesson teaches
-            </p>
+            {/* The book's own projects, built on a real micro:bit simulator */}
+            {mbExercises.length > 0 && (
+              <div className="mb-4">
+                <p className="mb-2.5 text-[11px] font-bold tracking-wide text-ink-400 uppercase">
+                  Build it on the micro:bit
+                </p>
+                <div className="space-y-2">
+                  {mbExercises.map((ex) => (
+                    <Link
+                      key={ex.id}
+                      href={`/microbit?exercise=${ex.id}`}
+                      className="flex items-start gap-3 rounded-xl border border-bit-300 bg-bit-50 p-3.5 transition-colors hover:border-bit-500"
+                    >
+                      <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-bit-100 text-bit-700">
+                        <CircuitBoard className="size-4" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block text-[13.5px] font-semibold text-ink-900">
+                          {ex.title}
+                        </span>
+                        <span className="mt-0.5 line-clamp-2 block text-[12.5px] leading-snug text-ink-600">
+                          {ex.brief}
+                        </span>
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activities.length > 0 && (
+              <p className="mb-2.5 text-[11px] font-bold tracking-wide text-ink-400 uppercase">
+                Practise what this lesson teaches
+              </p>
+            )}
             <div className="space-y-2.5">
               {activities.map(({ block, stageTitle, stageKind }) => {
                 const meta = describeInteractive(block);
