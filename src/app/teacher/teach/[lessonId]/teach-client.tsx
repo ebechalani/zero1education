@@ -12,6 +12,7 @@ import type { Block } from "@/types/content";
 import {
   ChevronLeft,
   ChevronRight,
+  CircuitBoard,
   Eye,
   EyeOff,
   GraduationCap,
@@ -21,6 +22,8 @@ import {
   Timer,
   X,
 } from "lucide-react";
+import { exercisesForLesson } from "@/features/microbit/exercises";
+import { MicrobitStudio } from "@/features/microbit/microbit-studio";
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -51,6 +54,10 @@ export default function TeachModePage() {
   const [index, setIndex] = useState(0);
   const [reveal, setReveal] = useState(false);
   const [showNotes, setShowNotes] = useState(true);
+  // A live micro:bit, on top of the slide. Toggled rather than a separate page
+  // so a teacher demonstrating mid-explanation never loses their place.
+  const [showDevice, setShowDevice] = useState(false);
+  const hasMicrobit = Boolean(lesson && exercisesForLesson(lesson.id).length > 0);
   const timer = useTimer();
 
   const slides: Slide[] = useMemo(() => {
@@ -165,6 +172,22 @@ export default function TeachModePage() {
                 {reveal ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
                 {reveal ? "Answers shown" : "Answers hidden"}
               </button>
+              {hasMicrobit && (
+                <button
+                  onClick={() => setShowDevice(!showDevice)}
+                  aria-pressed={showDevice}
+                  title="Put a working micro:bit on the board"
+                  className={cn(
+                    "flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] font-semibold transition-colors",
+                    showDevice
+                      ? "bg-signal-500/20 text-signal-400"
+                      : "bg-white/10 text-ink-200 hover:bg-white/20",
+                  )}
+                >
+                  <CircuitBoard className="size-4" />
+                  micro:bit
+                </button>
+              )}
               <Button href={`/teacher/lesson/${lesson.id}`} variant="inverse" size="sm" icon={<X />}>
                 Exit
               </Button>
@@ -173,7 +196,15 @@ export default function TeachModePage() {
 
           {/* Slide area */}
           <main className="flex flex-1 items-center justify-center px-6 py-8 lg:px-16">
-            {slide.isStageCover ? (
+            {showDevice ? (
+              <div className="animate-fade-up w-full max-w-6xl">
+                <MicrobitStudio className="[&_*]:!text-[13px]" />
+                <p className="mt-2 text-center text-xs text-ink-500">
+                  Set the speed to Slow so the class can watch each block run ·
+                  press the micro:bit button again to return to the lesson
+                </p>
+              </div>
+            ) : slide.isStageCover ? (
               <div className="animate-fade-up text-center" key={index}>
                 <span
                   className="mx-auto mb-6 flex size-20 items-center justify-center rounded-3xl bg-white/10 [&>svg]:size-9"

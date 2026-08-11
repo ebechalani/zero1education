@@ -10,6 +10,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 import {
   Award,
   BookOpen,
+  CircuitBoard,
   FlaskConical,
   FolderKanban,
   Home,
@@ -23,6 +24,7 @@ const NAV: NavItem[] = [
   { href: "/student", label: "Home", icon: Home },
   { href: "/student/journey", label: "My Journey", icon: Map },
   { href: "/library", label: "Read the Book", icon: BookOpen },
+  { href: "/microbit", label: "micro:bit Studio", icon: CircuitBoard },
   { href: "/student/labs", label: "ZERO1 Labs", icon: FlaskConical },
   { href: "/student/projects", label: "Projects", icon: Rocket },
   { href: "/student/skills", label: "Digital Passport", icon: Sparkles },

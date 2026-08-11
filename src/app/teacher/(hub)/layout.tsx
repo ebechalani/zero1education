@@ -7,6 +7,7 @@ import { DemoChip } from "@/components/brand/demo-chip";
 import {
   BarChart3,
   BookOpen,
+  CircuitBoard,
   LayoutDashboard,
   Library,
   Users,
@@ -17,6 +18,7 @@ const NAV: NavItem[] = [
   { href: "/teacher/classes", label: "My Classes", icon: Users },
   { href: "/teacher/curriculum", label: "Curriculum", icon: BookOpen },
   { href: "/library", label: "Read the Book", icon: Library },
+  { href: "/microbit", label: "micro:bit Studio", icon: CircuitBoard },
   { href: "/teacher/analytics", label: "Analytics", icon: BarChart3 },
 ];
 

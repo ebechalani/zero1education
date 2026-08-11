@@ -30,15 +30,12 @@ import { cn } from "@/lib/utils";
 import {
   Blocks,
   ChevronDown,
-  ChevronRight,
-  CircleDot,
   GripVertical,
   Keyboard,
   Minus,
   MousePointerClick,
   Plus,
   Power,
-  Repeat,
   Trash2,
 } from "lucide-react";
 import {
@@ -49,6 +46,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent as ReactKeyboardEvent,
   type ReactNode,
 } from "react";
@@ -68,6 +66,7 @@ import {
   MB_STATEMENT_CATEGORY,
   MB_ZIP_COLOURS,
   mbEventText,
+  mbExprCategory,
   mbIsContainer,
   mbNum,
   mbStatementText,
@@ -525,10 +524,133 @@ function useFieldTab(ownerId: string): number {
   return selection && selection.kind !== "slot" && selection.id === ownerId ? 0 : -1;
 }
 
+// ── MakeCode geometry ───────────────────────────────────────────────────────
+
+/**
+ * These are MakeCode's own measurements, in fixed px rather than tokens: an
+ * 8×4 notch set 14px in from the left edge, 4px corners, and a 14px rail down
+ * the inside of every C-shaped block. Change them and blocks stop matching the
+ * screenshots in the book.
+ */
+const NOTCH_X = 14;
+const NOTCH_W = 8;
+const NOTCH_D = 4;
+const RAIL = 14;
+const RADIUS = 4;
+
+/** White words on saturated colour — a hair of shadow keeps them crisp. */
+const TEXT_SHADOW = "0 1px 1px rgba(11,17,32,0.28)";
+
+const NOTCH_SHAPE = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns="http://www.w3.org/2000/svg" width="${NOTCH_W}" height="${NOTCH_D}"><rect width="${NOTCH_W}" height="${NOTCH_D}" rx="2" fill="#000"/></svg>`,
+)}")`;
+
+/**
+ * The socket in a block's top edge is a hole punched clean through the face —
+ * "the whole rectangle, minus the notch" — so the tab of the block above shows
+ * through it and the two interlock, exactly as two MakeCode blocks do. A
+ * browser without mask-composite falls back to a plain rectangle: a block that
+ * has lost its dent, never a block that has vanished.
+ */
+const SOCKET: CSSProperties = {
+  maskImage: `linear-gradient(#000, #000), ${NOTCH_SHAPE}`,
+  maskPosition: `0 0, ${NOTCH_X}px 0`,
+  maskSize: `auto, ${NOTCH_W}px ${NOTCH_D}px`,
+  maskRepeat: "no-repeat",
+  maskComposite: "exclude",
+  WebkitMaskImage: `linear-gradient(#000, #000), ${NOTCH_SHAPE}`,
+  WebkitMaskPosition: `0 0, ${NOTCH_X}px 0`,
+  WebkitMaskSize: `auto, ${NOTCH_W}px ${NOTCH_D}px`,
+  WebkitMaskRepeat: "no-repeat",
+  WebkitMaskComposite: "xor",
+};
+
+/** Booleans are hexagons, so only they look like they fit a test slot. */
+const HEX_CLIP =
+  "polygon(8px 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%)";
+
+/**
+ * A block's colour is painted on its own layer *behind* the words, so the mask
+ * that cuts the socket can never clip a field, a dropdown or a focus ring.
+ */
+function Face({
+  hex,
+  radius = `${RADIUS}px`,
+  socket = false,
+}: {
+  hex: string;
+  radius?: string;
+  socket?: boolean;
+}) {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inset-0"
+      style={{ background: hex, borderRadius: radius, ...(socket ? SOCKET : null) }}
+    />
+  );
+}
+
+/** The tab that drops into the socket of the block below. */
+function Tab({ hex, className }: { hex: string; className: string }) {
+  return (
+    <span
+      aria-hidden
+      className={cn("pointer-events-none absolute rounded-b-[2px]", className)}
+      style={{ background: hex, left: NOTCH_X, width: NOTCH_W, height: NOTCH_D }}
+    />
+  );
+}
+
+/** An event hat: the wide shallow dome MakeCode springs off the left edge. */
+function Dome({ hex }: { hex: string }) {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute left-0 w-24 rounded-t-[999px]"
+      // 1px of overlap with the bar below, so no hairline shows at any zoom.
+      style={{ background: hex, height: 16, top: -15 }}
+    />
+  );
+}
+
+/** Selected: white just inside the edge, ink just outside. Reads on every hue. */
+function SelectRing() {
+  return (
+    <span
+      aria-hidden
+      className="pointer-events-none absolute -inset-[3px] rounded-[7px]"
+      style={{ boxShadow: "inset 0 0 0 2px #ffffff, 0 0 0 2px rgba(11,17,32,0.9)" }}
+    />
+  );
+}
+
+/** The boolean shape — the clip lives on a backing layer so children escape it. */
+function Hexagon({ hex, children }: { hex: string; children: ReactNode }) {
+  return (
+    <span className="relative inline-flex min-h-8 items-center px-3 py-1">
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{ background: hex, clipPath: HEX_CLIP }}
+      />
+      <span className="relative inline-flex items-center gap-1">{children}</span>
+    </span>
+  );
+}
+
 // ── Inline field atoms ──────────────────────────────────────────────────────
 
-const FIELD =
-  "h-8 rounded-md bg-white text-[14px] font-mono font-semibold text-ink-900 ring-1 ring-ink-900/15 disabled:bg-white/70 disabled:text-ink-400";
+const PILL = "inline-flex items-center rounded-full text-[13px] leading-none font-semibold";
+/** A white MakeCode value field — fully rounded, dark text, auto width. */
+const WHITE_PILL = `${PILL} h-6 bg-white px-1.5 text-ink-900 shadow-[0_1px_0_rgba(11,17,32,0.2)] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500`;
+/** A dropdown painted onto the block face, the way MakeCode darkens its own. */
+const DARK_PILL = `${PILL} relative h-6 cursor-pointer gap-1 bg-black/20 pr-1.5 pl-2 text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-white`;
+const BARE_INPUT =
+  "min-w-0 border-0 bg-transparent p-0 font-mono text-[13px] font-semibold text-ink-900 outline-none placeholder:text-ink-300 disabled:text-ink-400";
+/** Invisible <select> laid over its pill, grown to a 32px touch target. */
+const OVERLAY_SELECT =
+  "absolute inset-x-0 -inset-y-1 cursor-pointer opacity-0 disabled:cursor-default";
 
 /** Typing inside a block must not reach the block's own arrow/Delete keys. */
 const stopKeys = (e: ReactKeyboardEvent) => {
@@ -537,7 +659,7 @@ const stopKeys = (e: ReactKeyboardEvent) => {
 
 function W({ children }: { children: ReactNode }) {
   return (
-    <span className="px-0.5 text-[15px] leading-none font-semibold whitespace-nowrap">
+    <span className="px-0.5 text-[13.5px] leading-none font-semibold whitespace-nowrap text-white">
       {children}
     </span>
   );
@@ -561,28 +683,30 @@ function NumberField({
   const [draft, setDraft] = useState<string | null>(null);
   const shown = draft ?? String(value);
   return (
-    <input
-      data-field
-      type="number"
-      inputMode="numeric"
-      aria-label={label}
-      value={shown}
-      disabled={readOnly}
-      tabIndex={tabIndex}
-      onKeyDown={stopKeys}
-      onChange={(e) => {
-        const raw = e.target.value;
-        setDraft(raw);
-        const n = Number(raw);
-        if (raw.trim() !== "" && Number.isFinite(n)) onCommit(n);
-      }}
-      onBlur={() => setDraft(null)}
-      className={cn(
-        FIELD,
-        "px-1.5 text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
-      )}
-      style={{ width: `calc(${Math.max(1, shown.length)}ch + 1.15rem)` }}
-    />
+    <span className={cn(WHITE_PILL, "px-1")}>
+      <input
+        data-field
+        type="number"
+        inputMode="numeric"
+        aria-label={label}
+        value={shown}
+        disabled={readOnly}
+        tabIndex={tabIndex}
+        onKeyDown={stopKeys}
+        onChange={(e) => {
+          const raw = e.target.value;
+          setDraft(raw);
+          const n = Number(raw);
+          if (raw.trim() !== "" && Number.isFinite(n)) onCommit(n);
+        }}
+        onBlur={() => setDraft(null)}
+        className={cn(
+          BARE_INPUT,
+          "h-5 text-center [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+        )}
+        style={{ width: `calc(${Math.max(1, shown.length)}ch + 0.6rem)` }}
+      />
+    </span>
   );
 }
 
@@ -600,19 +724,21 @@ function TextField({
   const { readOnly } = useEditor();
   const tabIndex = useFieldTab(ownerId);
   return (
-    <input
-      data-field
-      type="text"
-      aria-label={label}
-      value={value}
-      maxLength={24}
-      disabled={readOnly}
-      tabIndex={tabIndex}
-      onKeyDown={stopKeys}
-      onChange={(e) => onCommit(e.target.value)}
-      className={cn(FIELD, "px-2")}
-      style={{ width: `calc(${Math.max(4, value.length)}ch + 1.25rem)` }}
-    />
+    <span className={cn(WHITE_PILL, "px-2")}>
+      <input
+        data-field
+        type="text"
+        aria-label={label}
+        value={value}
+        maxLength={24}
+        disabled={readOnly}
+        tabIndex={tabIndex}
+        onKeyDown={stopKeys}
+        onChange={(e) => onCommit(e.target.value)}
+        className={cn(BARE_INPUT, "h-5")}
+        style={{ width: `calc(${Math.max(4, value.length)}ch + 0.35rem)` }}
+      />
+    </span>
   );
 }
 
@@ -633,9 +759,12 @@ function ChoiceField({
 }) {
   const { readOnly } = useEditor();
   const tabIndex = useFieldTab(ownerId);
+  const current = options.find((o) => o.value === value);
   return (
-    <span className="relative inline-flex items-center">
-      {lead && <span className="pointer-events-none absolute left-1.5 z-10">{lead}</span>}
+    <span className={cn(DARK_PILL, readOnly && "cursor-default")}>
+      {lead}
+      <span className="whitespace-nowrap">{current?.label ?? value}</span>
+      <ChevronDown className="size-3.5 shrink-0 opacity-80" aria-hidden />
       <select
         data-field
         aria-label={label}
@@ -644,11 +773,7 @@ function ChoiceField({
         tabIndex={tabIndex}
         onKeyDown={stopKeys}
         onChange={(e) => onChange(e.target.value)}
-        className={cn(
-          FIELD,
-          "cursor-pointer appearance-none py-0 pr-6",
-          lead ? "pl-6" : "pl-2",
-        )}
+        className={OVERLAY_SELECT}
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -656,10 +781,6 @@ function ChoiceField({
           </option>
         ))}
       </select>
-      <ChevronDown
-        className="pointer-events-none absolute right-1.5 size-3.5 text-ink-400"
-        aria-hidden
-      />
     </span>
   );
 }
@@ -683,33 +804,35 @@ function VarField({
 
   if (naming) {
     return (
-      <input
-        data-field
-        autoFocus
-        aria-label="New variable name"
-        value={draft}
-        disabled={readOnly}
-        tabIndex={tabIndex}
-        placeholder="name"
-        onKeyDown={(e) => {
-          stopKeys(e);
-          if (e.key === "Enter") {
+      <span className={cn(WHITE_PILL, "px-2")}>
+        <input
+          data-field
+          autoFocus
+          aria-label="New variable name"
+          value={draft}
+          disabled={readOnly}
+          tabIndex={tabIndex}
+          placeholder="name"
+          onKeyDown={(e) => {
+            stopKeys(e);
+            if (e.key === "Enter") {
+              const clean = draft.trim();
+              if (clean) onChange(clean);
+              setNaming(false);
+              setDraft("");
+            }
+            if (e.key === "Escape") setNaming(false);
+          }}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={() => {
             const clean = draft.trim();
             if (clean) onChange(clean);
             setNaming(false);
             setDraft("");
-          }
-          if (e.key === "Escape") setNaming(false);
-        }}
-        onChange={(e) => setDraft(e.target.value)}
-        onBlur={() => {
-          const clean = draft.trim();
-          if (clean) onChange(clean);
-          setNaming(false);
-          setDraft("");
-        }}
-        className={cn(FIELD, "w-28 px-2")}
-      />
+          }}
+          className={cn(BARE_INPUT, "h-5 w-24")}
+        />
+      </span>
     );
   }
 
@@ -748,7 +871,7 @@ function IconGrid({ icon, size = 1 }: { icon: MbIcon; size?: number }) {
   );
 }
 
-/** Icon picker — expands on its own line inside the block, never clipped. */
+/** Icon picker — the chosen pattern on the block, the rest in a dropdown. */
 function IconField({
   ownerId,
   icon,
@@ -762,7 +885,7 @@ function IconField({
   const tabIndex = useFieldTab(ownerId);
   const [open, setOpen] = useState(false);
   return (
-    <>
+    <span className="relative inline-flex">
       <button
         data-field
         type="button"
@@ -772,17 +895,19 @@ function IconField({
         tabIndex={tabIndex}
         onKeyDown={stopKeys}
         onClick={() => setOpen((o) => !o)}
-        className={cn(FIELD, "inline-flex cursor-pointer items-center gap-1.5 px-1.5")}
+        className={cn(DARK_PILL, "gap-1.5 pl-1.5", readOnly && "cursor-default")}
       >
-        <IconGrid icon={icon} />
-        <span className="text-[13px]">{MB_ICON_LABEL[icon]}</span>
-        <ChevronDown className="size-3.5 text-ink-400" aria-hidden />
+        <span className="inline-flex rounded-[3px] bg-white p-0.5">
+          <IconGrid icon={icon} />
+        </span>
+        <span className="whitespace-nowrap">{MB_ICON_LABEL[icon]}</span>
+        <ChevronDown className="size-3.5 shrink-0 opacity-80" aria-hidden />
       </button>
       {open && !readOnly && (
-        <div
+        <span
           role="group"
           aria-label="Pick an icon"
-          className="mt-1 flex w-full basis-full flex-wrap gap-1.5 rounded-md bg-black/15 p-1.5"
+          className="absolute top-full left-0 z-30 mt-1 flex w-[188px] flex-wrap gap-1.5 rounded-lg bg-ink-900/95 p-2 shadow-pop"
         >
           {MB_ICON_ORDER.map((option) => (
             <button
@@ -805,9 +930,9 @@ function IconField({
               <IconGrid icon={option} />
             </button>
           ))}
-        </div>
+        </span>
       )}
-    </>
+    </span>
   );
 }
 
@@ -905,139 +1030,185 @@ function ValueSlot({
     }
   };
 
-  const grouped = expr.kind === "binop" || expr.kind === "random";
   const childBoolean = expr.kind === "binop" && MB_LOGIC_OPS.includes(expr.op);
   const opOptions = boolean
     ? [...MB_COMPARISONS, ...MB_LOGIC_OPS]
     : [...MB_MATH_OPS, ...MB_COMPARISONS];
+
+  // What sits in the slot decides its shape and its colour, exactly as in
+  // MakeCode: white pill for a number, category-coloured pill for a variable
+  // or a reporter, hexagon for anything that answers true or false.
+  const category = mbExprCategory(expr);
+  const hex = category ? MB_CATEGORIES[category].hex : undefined;
+  const isTest = expr.kind === "binop" && !MB_MATH_OPS.includes(expr.op);
+
+  /** MakeCode swaps values by dragging; this is the same move for a keyboard. */
+  const kindSelect = () => (
+    <select
+      data-field
+      aria-label={`What goes in ${label}`}
+      value={slotKindValue(expr)}
+      tabIndex={tabIndex}
+      onKeyDown={stopKeys}
+      onChange={(e) => changeKind(e.target.value)}
+      className={OVERLAY_SELECT}
+    >
+      {kindOptions.map((o) => (
+        <option key={o.value} value={o.value}>
+          {o.label}
+        </option>
+      ))}
+    </select>
+  );
+
+  /** Stands beside a white field or a group, which cannot host the menu itself. */
+  const caret = readOnly ? null : (
+    <span className="relative inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-black/25 text-white/90 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-white">
+      <ChevronDown className="size-3" aria-hidden />
+      {kindSelect()}
+    </span>
+  );
+
+  /** A reporter block sitting in the slot: its own colour, its own dropdown. */
+  const menuPill = (text: string) => (
+    <span
+      className="relative inline-flex h-6 items-center gap-1 rounded-full pr-1.5 pl-2.5 text-[13px] leading-none font-semibold whitespace-nowrap text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-white"
+      style={{ background: hex, textShadow: TEXT_SHADOW }}
+    >
+      {text}
+      {!readOnly && (
+        <>
+          <ChevronDown className="size-3.5 shrink-0 opacity-85" aria-hidden />
+          {kindSelect()}
+        </>
+      )}
+    </span>
+  );
+
+  let body: ReactNode = null;
+  if (expr.kind === "num") {
+    body = (
+      <>
+        <NumberField
+          ownerId={ownerId}
+          value={expr.value}
+          label={label}
+          onCommit={(n) => set(mbNum(n))}
+        />
+        {caret}
+      </>
+    );
+  } else if (expr.kind === "var") {
+    body = menuPill(expr.name);
+  } else if (
+    expr.kind === "temperature" ||
+    expr.kind === "humidity" ||
+    expr.kind === "light"
+  ) {
+    body = menuPill(SENSOR_LABEL[expr.kind]);
+  } else if (expr.kind === "random") {
+    body = (
+      <span
+        className="relative inline-flex min-h-7 items-center gap-1 rounded-full px-2 py-0.5"
+        style={{ background: hex, textShadow: TEXT_SHADOW }}
+      >
+        <W>pick random</W>
+        <ValueSlot
+          ownerId={ownerId}
+          path={[...path, "min"]}
+          expr={expr.min}
+          label={`${label} lowest`}
+        />
+        <W>to</W>
+        <ValueSlot
+          ownerId={ownerId}
+          path={[...path, "max"]}
+          expr={expr.max}
+          label={`${label} highest`}
+        />
+        {caret}
+      </span>
+    );
+  } else if (expr.kind === "binop") {
+    const parts = (
+      <>
+        <ValueSlot
+          ownerId={ownerId}
+          path={[...path, "left"]}
+          expr={expr.left}
+          label={`${label} left side`}
+          boolean={childBoolean}
+        />
+        <ChoiceField
+          ownerId={ownerId}
+          value={expr.op}
+          label={`${label} operator`}
+          options={opOptions.map((op) => ({ value: op, label: MB_OP_LABEL[op] }))}
+          onChange={(op) => set({ ...expr, op: op as MbBinOp })}
+        />
+        <ValueSlot
+          ownerId={ownerId}
+          path={[...path, "right"]}
+          expr={expr.right}
+          label={`${label} right side`}
+          boolean={childBoolean}
+        />
+        {caret}
+      </>
+    );
+    body = isTest ? (
+      <Hexagon hex={hex ?? MB_CATEGORIES.logic.hex}>{parts}</Hexagon>
+    ) : (
+      <span
+        className="relative inline-flex min-h-7 items-center gap-1 rounded-full px-2 py-0.5"
+        style={{ background: hex }}
+      >
+        {parts}
+      </span>
+    );
+  }
 
   return (
     <span
       ref={setNodeRef}
       onFocus={() => setFocusedSlot({ ownerId, path, boolean })}
       className={cn(
-        "inline-flex items-center gap-1 rounded-md",
-        grouped && "bg-black/15 px-1 py-1",
-        slotLive && "ring-2 ring-white/50",
+        "inline-flex items-center gap-1 rounded-lg",
+        slotLive && "ring-2 ring-white/60",
         slotLive && isOver && "ring-2 ring-white",
       )}
     >
       {naming ? (
-        <input
-          data-field
-          autoFocus
-          aria-label="New variable name"
-          value={draft}
-          tabIndex={tabIndex}
-          placeholder="name"
-          onKeyDown={(e) => {
-            stopKeys(e);
-            if (e.key === "Enter") {
+        <span className={cn(WHITE_PILL, "px-2")}>
+          <input
+            data-field
+            autoFocus
+            aria-label="New variable name"
+            value={draft}
+            tabIndex={tabIndex}
+            placeholder="name"
+            onKeyDown={(e) => {
+              stopKeys(e);
+              if (e.key === "Enter") {
+                const clean = draft.trim();
+                if (clean) set(mbVarExpr(clean));
+                setNaming(false);
+                setDraft("");
+              }
+              if (e.key === "Escape") setNaming(false);
+            }}
+            onChange={(e) => setDraft(e.target.value)}
+            onBlur={() => {
               const clean = draft.trim();
               if (clean) set(mbVarExpr(clean));
               setNaming(false);
               setDraft("");
-            }
-            if (e.key === "Escape") setNaming(false);
-          }}
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={() => {
-            const clean = draft.trim();
-            if (clean) set(mbVarExpr(clean));
-            setNaming(false);
-            setDraft("");
-          }}
-          className={cn(FIELD, "w-24 px-2")}
-        />
+            }}
+            className={cn(BARE_INPUT, "h-5 w-20")}
+          />
+        </span>
       ) : (
-        <>
-          {expr.kind === "num" && (
-            <NumberField
-              ownerId={ownerId}
-              value={expr.value}
-              label={label}
-              onCommit={(n) => set(mbNum(n))}
-            />
-          )}
-          {expr.kind === "var" && (
-            <span className={cn(FIELD, "inline-flex items-center px-2 text-coral-700")}>
-              {expr.name}
-            </span>
-          )}
-          {(expr.kind === "temperature" ||
-            expr.kind === "humidity" ||
-            expr.kind === "light") && (
-            <span className={cn(FIELD, "inline-flex items-center px-2 text-amber-700")}>
-              {SENSOR_LABEL[expr.kind]}
-            </span>
-          )}
-          {expr.kind === "random" && (
-            <>
-              <W>random</W>
-              <ValueSlot
-                ownerId={ownerId}
-                path={[...path, "min"]}
-                expr={expr.min}
-                label={`${label} lowest`}
-              />
-              <W>to</W>
-              <ValueSlot
-                ownerId={ownerId}
-                path={[...path, "max"]}
-                expr={expr.max}
-                label={`${label} highest`}
-              />
-            </>
-          )}
-          {expr.kind === "binop" && (
-            <>
-              <ValueSlot
-                ownerId={ownerId}
-                path={[...path, "left"]}
-                expr={expr.left}
-                label={`${label} left side`}
-                boolean={childBoolean}
-              />
-              <ChoiceField
-                ownerId={ownerId}
-                value={expr.op}
-                label={`${label} operator`}
-                options={opOptions.map((op) => ({
-                  value: op,
-                  label: MB_OP_LABEL[op],
-                }))}
-                onChange={(op) => set({ ...expr, op: op as MbBinOp })}
-              />
-              <ValueSlot
-                ownerId={ownerId}
-                path={[...path, "right"]}
-                expr={expr.right}
-                label={`${label} right side`}
-                boolean={childBoolean}
-              />
-            </>
-          )}
-          {!readOnly && (
-            <span className="relative inline-flex size-6 items-center justify-center rounded-md bg-white/90 ring-1 ring-ink-900/15 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500">
-              <select
-                data-field
-                aria-label={`What goes in ${label}`}
-                value={slotKindValue(expr)}
-                tabIndex={tabIndex}
-                onKeyDown={stopKeys}
-                onChange={(e) => changeKind(e.target.value)}
-                className="absolute inset-0 cursor-pointer opacity-0"
-              >
-                {kindOptions.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="size-3.5 text-ink-500" aria-hidden />
-            </span>
-          )}
-        </>
+        body
       )}
     </span>
   );
@@ -1046,7 +1217,7 @@ function ValueSlot({
 // ── The words and fields of each statement ──────────────────────────────────
 
 function StatementFields({ stmt }: { stmt: MbStatement }) {
-  const { update, say } = useEditor();
+  const { update } = useEditor();
   const set = (next: MbStatement) => update((p) => mutateStatement(p, stmt.id, () => next));
 
   switch (stmt.kind) {
@@ -1231,22 +1402,17 @@ function StatementFields({ stmt }: { stmt: MbStatement }) {
             boolean
           />
           <W>then</W>
-          <ElseToggle stmt={stmt} onToggle={set} say={say} />
         </>
       );
   }
 }
 
-function ElseToggle({
-  stmt,
-  onToggle,
-  say,
-}: {
-  stmt: Extract<MbStatement, { kind: "if" }>;
-  onToggle: (next: MbStatement) => void;
-  say: (message: string) => void;
-}) {
-  const { readOnly } = useEditor();
+/**
+ * MakeCode's circled ⊕ under an if block. It lives in the bottom lip, not in
+ * the header, which is where a student following the book will look for it.
+ */
+function ElseToggle({ stmt }: { stmt: Extract<MbStatement, { kind: "if" }> }) {
+  const { readOnly, update, say } = useEditor();
   const tabIndex = useFieldTab(stmt.id);
   if (readOnly) return null;
   const hasElse = Boolean(stmt.otherwise);
@@ -1260,21 +1426,25 @@ function ElseToggle({
       onClick={() => {
         if (hasElse) {
           const { otherwise, ...rest } = stmt;
-          onToggle(rest);
+          update((p) => mutateStatement(p, stmt.id, () => rest));
           say(
             otherwise && otherwise.length > 0
               ? "Removed the else part and the blocks inside it."
               : "Removed the else part.",
           );
         } else {
-          onToggle({ ...stmt, otherwise: [] });
+          update((p) => mutateStatement(p, stmt.id, () => ({ ...stmt, otherwise: [] })));
           say("Added an else part — blocks in there run when the test is false.");
         }
       }}
-      className="ml-1 inline-flex h-7 cursor-pointer items-center gap-1 rounded-md bg-black/15 px-2 text-[12.5px] font-semibold hover:bg-black/25"
+      // The ::after grows a 20px circle into a 32px target for small fingers.
+      className="relative flex size-5 cursor-pointer items-center justify-center rounded-full bg-white/20 text-white ring-1 ring-white/70 after:absolute after:-inset-[6px] after:content-[''] hover:bg-white/40"
     >
-      {hasElse ? <Minus className="size-3.5" /> : <Plus className="size-3.5" />}
-      else
+      {hasElse ? (
+        <Minus className="size-3" aria-hidden />
+      ) : (
+        <Plus className="size-3" aria-hidden />
+      )}
     </button>
   );
 }
@@ -1295,7 +1465,7 @@ function EmptySlot({ containerKey }: { containerKey: ContainerKey }) {
         select({ kind: "slot", container: containerKey });
       }}
       className={cn(
-        "flex w-full cursor-pointer items-center gap-2 rounded-lg border-2 border-dashed px-3 py-2.5 text-left text-[13px] font-medium transition-colors",
+        "flex min-h-9 w-full min-w-[190px] cursor-pointer items-center gap-2 rounded-[4px] border-2 border-dashed px-2.5 py-1.5 text-left text-[12.5px] font-medium transition-colors",
         active
           ? "border-brand-500 bg-brand-50 text-brand-700"
           : "border-ink-300 bg-white/70 text-ink-400 hover:border-brand-400 hover:text-brand-600",
@@ -1325,9 +1495,13 @@ function StackList({
   return (
     <div
       ref={setNodeRef}
+      // No vertical rhythm here on purpose: blocks butt together so the tab of
+      // one sits in the socket of the next.
       className={cn(
-        "min-h-10 space-y-2 rounded-md",
-        dragShape === "statement" && isOver && "outline-2 outline-dashed outline-brand-500",
+        "min-w-max",
+        dragShape === "statement" &&
+          isOver &&
+          "outline-2 outline-offset-2 outline-dashed outline-brand-500",
       )}
     >
       <SortableContext items={items.map((s) => s.id)} strategy={verticalListSortingStrategy}>
@@ -1346,32 +1520,37 @@ function StackList({
   );
 }
 
-/** The indented, railed area that makes nesting visible. */
-function BodyRegion({
+/**
+ * The inside of a C: a 14px rail down the left, then the child stack over the
+ * page itself. The cavity is genuinely transparent — that is what makes nested
+ * blocks read as being *inside* the loop rather than painted on top of it.
+ */
+function Cavity({
+  hex,
   containerKey,
   items,
   depth,
-  flush,
 }: {
+  hex: string;
   containerKey: ContainerKey;
   items: MbStatement[];
   depth: number;
-  flush?: boolean;
 }) {
   return (
     <div className="flex">
-      <span className="w-5 shrink-0" aria-hidden />
-      <div
-        className={cn(
-          "min-w-0 flex-1 bg-ink-50 p-2 shadow-[inset_0_1px_3px_rgba(11,17,32,0.14)]",
-          flush ? "rounded-l-lg" : "rounded-lg",
-        )}
-      >
+      <span aria-hidden className="shrink-0" style={{ background: hex, width: RAIL }} />
+      <div className="relative min-w-[190px]">
+        {/* The parent's own tab, waiting in the first child's socket. */}
+        {items.length > 0 && <Tab hex={hex} className="top-0" />}
         <StackList containerKey={containerKey} items={items} depth={depth} />
       </div>
     </div>
   );
 }
+
+/** Small round controls on a block face: 28px of paint, 32px of target. */
+const BLOCK_BUTTON =
+  "relative flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-full text-white/75 transition after:absolute after:-inset-[2px] after:content-[''] hover:text-white";
 
 function DeleteButton({ onClick, label }: { onClick: () => void; label: string }) {
   return (
@@ -1384,7 +1563,7 @@ function DeleteButton({ onClick, label }: { onClick: () => void; label: string }
         e.stopPropagation();
         onClick();
       }}
-      className="mt-1 flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md bg-black/15 opacity-70 transition hover:bg-black/30 hover:opacity-100"
+      className={cn(BLOCK_BUTTON, "bg-black/15 hover:bg-black/35")}
     >
       <Trash2 className="size-3.5" aria-hidden />
     </button>
@@ -1480,11 +1659,11 @@ function BlockNode({
         transform: isDragging ? undefined : CSS.Transform.toString(transform),
         transition,
       }}
-      className={cn("relative", isDragging && "opacity-40")}
+      className={cn("relative w-max", isDragging && "opacity-40")}
     >
       {dropping && (
         <span
-          className="absolute -top-1 left-0 z-10 h-1.5 w-full rounded-full bg-brand-500 shadow-glow"
+          className="pointer-events-none absolute -top-[3px] left-0 z-20 h-1.5 w-full rounded-full bg-brand-500 shadow-glow"
           aria-hidden
         />
       )}
@@ -1506,84 +1685,93 @@ function BlockNode({
           if ((e.target as HTMLElement).closest("[data-block]") === e.currentTarget)
             editor.select({ kind: "statement", id: stmt.id });
         }}
-        className={cn(
-          "relative rounded-lg shadow-card outline-none",
-          cat.face,
-          shell && "overflow-hidden",
-          selected && "ring-2 ring-brand-500 ring-offset-2 ring-offset-ink-50",
-        )}
+        className="relative outline-none"
       >
-        <span
-          className="absolute top-0 left-4 h-1.5 w-5 rounded-b-[4px] bg-black/20"
-          aria-hidden
-        />
-        <div className="flex items-start gap-1 px-1.5 py-1">
-          {!editor.readOnly && (
-            <button
-              ref={setActivatorNodeRef}
-              {...listeners}
-              type="button"
-              tabIndex={-1}
-              aria-label={`Drag ${mbStatementText(stmt)}`}
-              className="mt-1 flex h-8 w-4 shrink-0 cursor-grab touch-none items-center justify-center rounded opacity-60 hover:opacity-100 active:cursor-grabbing"
-            >
-              <GripVertical className="size-4" aria-hidden />
-            </button>
-          )}
-          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1 py-1">
+        {/* The bar carrying the words — and, for a C-block, the top of the C. */}
+        <div className="relative">
+          <Face
+            hex={cat.hex}
+            radius={shell ? `${RADIUS}px ${RADIUS}px 0 0` : `${RADIUS}px`}
+            socket
+          />
+          <div
+            className="relative flex min-h-8 items-center gap-1 py-1 pr-1 pl-2.5"
+            style={{ textShadow: TEXT_SHADOW }}
+          >
             <StatementFields stmt={stmt} />
+            {!editor.readOnly && (
+              <span className="ml-1 flex shrink-0 items-center gap-1.5">
+                <button
+                  ref={setActivatorNodeRef}
+                  {...listeners}
+                  type="button"
+                  tabIndex={-1}
+                  aria-label={`Drag ${mbStatementText(stmt)}`}
+                  className={cn(
+                    BLOCK_BUTTON,
+                    "cursor-grab touch-none hover:bg-black/20 active:cursor-grabbing",
+                  )}
+                >
+                  <GripVertical className="size-4" aria-hidden />
+                </button>
+                <DeleteButton
+                  onClick={() => editor.removeBlock(stmt.id)}
+                  label={`Delete ${mbStatementText(stmt)}`}
+                />
+              </span>
+            )}
           </div>
-          {!editor.readOnly && (
-            <DeleteButton
-              onClick={() => editor.removeBlock(stmt.id)}
-              label={`Delete ${mbStatementText(stmt)}`}
-            />
-          )}
         </div>
         {shell && (
-          <div className="pb-2.5">
-            <BodyRegion
+          <>
+            <Cavity
+              hex={cat.hex}
               containerKey={ckey(shell.id, shell.kind === "if" ? "then" : "body")}
               items={shell.kind === "if" ? shell.then : shell.body}
               depth={depth + 1}
-              flush
             />
             {shell.kind === "if" && shell.otherwise && (
               <>
-                <p className="px-3 py-1.5 text-[15px] font-semibold">else</p>
-                <BodyRegion
+                <div className="relative">
+                  <Face hex={cat.hex} radius="0" />
+                  <p
+                    className="relative px-3 py-1.5 text-[13.5px] font-semibold text-white"
+                    style={{ textShadow: TEXT_SHADOW }}
+                  >
+                    else
+                  </p>
+                </div>
+                <Cavity
+                  hex={cat.hex}
                   containerKey={ckey(shell.id, "else")}
                   items={shell.otherwise}
                   depth={depth + 1}
-                  flush
                 />
               </>
             )}
-          </div>
+            {/* The lip that closes the C — and, on an if, carries the ⊕. */}
+            <div className="relative">
+              <Face hex={cat.hex} radius={`0 0 ${RADIUS}px ${RADIUS}px`} />
+              <div
+                className="relative flex items-center px-2"
+                style={{ minHeight: shell.kind === "if" ? 28 : RAIL }}
+              >
+                {shell.kind === "if" && <ElseToggle stmt={shell} />}
+              </div>
+            </div>
+          </>
         )}
+        <Tab hex={cat.hex} className="top-full" />
+        {selected && <SelectRing />}
       </div>
-      <span
-        className={cn(
-          "pointer-events-none absolute top-full left-4 h-1.5 w-5 rounded-b-[4px]",
-          cat.bg,
-        )}
-        aria-hidden
-      />
     </div>
   );
 }
-
-const HAT_ICON: Record<MbEvent["kind"], typeof Power> = {
-  "on-start": Power,
-  forever: Repeat,
-  "on-button": CircleDot,
-};
 
 function EventNode({ event }: { event: MbEvent }) {
   const editor = useEditor();
   const cat = MB_CATEGORIES[MB_EVENT_CATEGORY[event.kind]];
   const selected = editor.selection?.kind === "event" && editor.selection.id === event.id;
-  const Icon = HAT_ICON[event.kind];
 
   const onKeyDown = (e: ReactKeyboardEvent<HTMLDivElement>) => {
     const mine = () => {
@@ -1634,15 +1822,16 @@ function EventNode({ event }: { event: MbEvent }) {
         if ((e.target as HTMLElement).closest("[data-block]") === e.currentTarget)
           editor.select({ kind: "event", id: event.id });
       }}
-      className={cn(
-        "animate-fade-up rounded-t-[22px] rounded-b-xl shadow-pop outline-none",
-        cat.face,
-        selected && "ring-2 ring-brand-500 ring-offset-2 ring-offset-ink-50",
-      )}
+      // mt-4 leaves room for the dome, which overhangs the box.
+      className="animate-fade-up relative mt-4 w-max outline-none"
     >
-      <div className="flex items-center gap-2 px-3.5 pt-2.5 pb-2">
-        <Icon className="size-5 shrink-0 opacity-90" aria-hidden />
-        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1">
+      <div className="relative">
+        <Dome hex={cat.hex} />
+        <Face hex={cat.hex} radius={`0 ${RADIUS}px 0 0`} />
+        <div
+          className="relative flex min-h-9 items-center gap-1 py-1 pr-1 pl-3"
+          style={{ textShadow: TEXT_SHADOW }}
+        >
           {event.kind === "on-start" && <W>on start</W>}
           {event.kind === "forever" && <W>forever</W>}
           {event.kind === "on-button" && (
@@ -1666,26 +1855,126 @@ function EventNode({ event }: { event: MbEvent }) {
               <W>pressed</W>
             </>
           )}
+          {!editor.readOnly && (
+            <span className="ml-2 flex shrink-0">
+              <DeleteButton
+                onClick={() => editor.removeBlock(event.id)}
+                label={`Delete ${mbEventText(event)} and everything inside it`}
+              />
+            </span>
+          )}
         </div>
-        {!editor.readOnly && (
-          <DeleteButton
-            onClick={() => editor.removeBlock(event.id)}
-            label={`Delete ${mbEventText(event)} and everything inside it`}
-          />
-        )}
       </div>
-      <div className="px-2 pb-2">
-        <BodyRegion
-          containerKey={ckey(event.id, "body")}
-          items={event.body}
-          depth={1}
-        />
-      </div>
+      <Cavity
+        hex={cat.hex}
+        containerKey={ckey(event.id, "body")}
+        items={event.body}
+        depth={1}
+      />
+      <div
+        aria-hidden
+        style={{
+          background: cat.hex,
+          height: RAIL,
+          borderRadius: `0 0 ${RADIUS}px ${RADIUS}px`,
+        }}
+      />
+      {selected && <SelectRing />}
     </div>
   );
 }
 
 // ── Palette ─────────────────────────────────────────────────────────────────
+
+/**
+ * A palette entry drawn as the block it makes — same shapes, same colours as
+ * the canvas. A student matching the book is looking for a picture, not a row
+ * of text, so the one-line help becomes the tooltip instead.
+ */
+function MiniBlock({ entry }: { entry: MbPaletteEntry }) {
+  const hex = entry.colour;
+  const words = (
+    <span
+      className="relative block px-2.5 py-1.5 text-[13px] leading-tight font-semibold text-white"
+      style={{ textShadow: TEXT_SHADOW }}
+    >
+      {entry.label}
+    </span>
+  );
+
+  if (entry.shape === "value")
+    return (
+      <span
+        className="inline-flex min-h-7 items-center rounded-full px-3 text-[13px] font-semibold text-white"
+        style={{ background: hex, textShadow: TEXT_SHADOW }}
+      >
+        {entry.label}
+      </span>
+    );
+
+  if (entry.shape === "condition")
+    return (
+      <span className="relative inline-flex min-h-8 items-center px-3">
+        <span
+          aria-hidden
+          className="absolute inset-0"
+          style={{ background: hex, clipPath: HEX_CLIP }}
+        />
+        <span
+          className="relative text-[13px] font-semibold text-white"
+          style={{ textShadow: TEXT_SHADOW }}
+        >
+          {entry.label}
+        </span>
+      </span>
+    );
+
+  if (entry.shape === "hat")
+    return (
+      <span className="relative mt-[15px] block">
+        <span className="relative block">
+          <Dome hex={hex} />
+          <Face hex={hex} radius={`0 ${RADIUS}px 0 0`} />
+          {words}
+        </span>
+        <span className="flex">
+          <span aria-hidden className="shrink-0" style={{ background: hex, width: RAIL, height: 14 }} />
+        </span>
+        <span
+          aria-hidden
+          className="block"
+          style={{ background: hex, height: 10, borderRadius: `0 0 ${RADIUS}px ${RADIUS}px` }}
+        />
+      </span>
+    );
+
+  if (entry.wraps)
+    return (
+      <span className="relative block">
+        <span className="relative block">
+          <Face hex={hex} radius={`${RADIUS}px ${RADIUS}px 0 0`} socket />
+          {words}
+        </span>
+        <span className="flex">
+          <span aria-hidden className="shrink-0" style={{ background: hex, width: RAIL, height: 16 }} />
+        </span>
+        <span
+          aria-hidden
+          className="block"
+          style={{ background: hex, height: 10, borderRadius: `0 0 ${RADIUS}px ${RADIUS}px` }}
+        />
+        <Tab hex={hex} className="top-full" />
+      </span>
+    );
+
+  return (
+    <span className="relative block">
+      <Face hex={hex} socket />
+      {words}
+      <Tab hex={hex} className="top-full" />
+    </span>
+  );
+}
 
 function PaletteItem({
   entry,
@@ -1704,72 +1993,80 @@ function PaletteItem({
       type="button"
       {...attributes}
       {...listeners}
+      title={entry.help}
       onClick={() => onAdd(entry)}
       className={cn(
-        "flex w-full cursor-grab touch-none flex-col items-stretch gap-1 rounded-lg p-1 text-left transition-colors hover:bg-ink-100 active:cursor-grabbing",
+        "block w-full cursor-grab touch-none rounded-[6px] text-left transition-transform hover:-translate-y-px active:cursor-grabbing",
         isDragging && "opacity-40",
       )}
     >
-      <span
-        className={cn(
-          "relative rounded-lg px-2.5 py-1.5 text-[14px] font-semibold shadow-card",
-          entry.colour,
-          entry.shape === "hat" && "rounded-t-[16px]",
-        )}
-      >
-        <span
-          className="absolute top-0 left-3 h-1 w-4 rounded-b-[3px] bg-black/20"
-          aria-hidden
-        />
-        {entry.label}
-      </span>
-      <span className="px-1 text-[11px] leading-snug text-ink-400">{entry.help}</span>
+      <MiniBlock entry={entry} />
     </button>
   );
 }
 
-function PaletteGroup({
-  category,
-  open,
-  onToggle,
+/** MakeCode's toolbox: categories down the side, that category's blocks beside. */
+function Palette({
+  active,
+  onSelect,
   onAdd,
 }: {
-  category: MbCategory;
-  open: boolean;
-  onToggle: () => void;
+  active: MbCategory;
+  onSelect: (category: MbCategory) => void;
   onAdd: (entry: MbPaletteEntry) => void;
 }) {
-  const cat = MB_CATEGORIES[category];
-  const entries = MB_PALETTE_BY_CATEGORY[category];
+  const cat = MB_CATEGORIES[active];
   return (
-    <section className="border-b border-ink-100 last:border-b-0">
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-expanded={open}
-        className="flex w-full cursor-pointer items-center gap-2 px-3 py-2.5 text-left transition-colors hover:bg-ink-50"
-      >
-        <span className={cn("size-3 shrink-0 rounded-[4px]", cat.accent)} aria-hidden />
-        <span className="flex-1 font-display text-[14px] font-semibold text-ink-800">
-          {cat.label}
-        </span>
-        <span className={cn("rounded-full px-1.5 py-0.5 font-mono text-[10px]", cat.soft)}>
-          {entries.length}
-        </span>
-        {open ? (
-          <ChevronDown className="size-4 text-ink-400" aria-hidden />
-        ) : (
-          <ChevronRight className="size-4 text-ink-400" aria-hidden />
-        )}
-      </button>
-      {open && (
-        <div className="space-y-1 px-2 pb-2.5">
-          {entries.map((entry) => (
-            <PaletteItem key={entry.kind} entry={entry} onAdd={onAdd} />
-          ))}
+    <aside className="flex w-full shrink-0 flex-col overflow-hidden rounded-xl border border-ink-200 bg-white shadow-card lg:w-[304px]">
+      <div className="flex items-center gap-2 border-b border-ink-100 px-3 py-2.5">
+        <Blocks className="size-4 text-brand-600" aria-hidden />
+        <div className="min-w-0 flex-1">
+          <h3 className="font-display text-[15px] font-semibold text-ink-900">Blocks</h3>
+          <p className="text-[11px] text-ink-400">Click to add · drag to place</p>
         </div>
-      )}
-    </section>
+      </div>
+      <div className="flex min-h-0 flex-1">
+        <nav
+          aria-label="Block categories"
+          className="thin-scroll max-h-[62vh] w-[104px] shrink-0 overflow-y-auto border-r border-ink-100 py-1"
+        >
+          {MB_CATEGORY_ORDER.map((id) => {
+            const meta = MB_CATEGORIES[id];
+            const on = id === active;
+            return (
+              <button
+                key={id}
+                type="button"
+                aria-current={on ? "true" : undefined}
+                onClick={() => onSelect(id)}
+                className={cn(
+                  "flex min-h-9 w-full cursor-pointer items-center gap-2 px-2.5 text-left text-[13px] font-semibold transition-colors",
+                  on ? "text-white" : "text-ink-700 hover:bg-ink-50",
+                )}
+                style={on ? { background: meta.hex } : undefined}
+              >
+                <span
+                  aria-hidden
+                  className="size-3 shrink-0 rounded-[3px]"
+                  style={{ background: on ? "rgba(255,255,255,0.92)" : meta.hex }}
+                />
+                {meta.label}
+              </button>
+            );
+          })}
+        </nav>
+        <div
+          className="thin-scroll max-h-[62vh] min-w-0 flex-1 overflow-auto p-2.5"
+          style={{ background: cat.tint }}
+        >
+          <div className="flex w-max min-w-full flex-col items-start gap-1.5">
+            {MB_PALETTE_BY_CATEGORY[active].map((entry) => (
+              <PaletteItem key={entry.kind} entry={entry} onAdd={onAdd} />
+            ))}
+          </div>
+        </div>
+      </div>
+    </aside>
   );
 }
 
@@ -1789,7 +2086,7 @@ export function BlockEditor({
 }) {
   const [selection, setSelection] = useState<MbSelection | null>(null);
   const [focusedSlot, setFocusedSlot] = useState<FocusedSlot | null>(null);
-  const [openCats, setOpenCats] = useState<MbCategory[]>(["basic", "input"]);
+  const [activeCat, setActiveCat] = useState<MbCategory>("basic");
   const [dragShape, setDragShape] = useState<MbPaletteShape | null>(null);
   const [dragEntry, setDragEntry] = useState<MbPaletteEntry | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -2241,34 +2538,7 @@ export function BlockEditor({
       <EditorCtx.Provider value={api}>
         <div className="flex flex-col gap-3 lg:flex-row">
           {!readOnly && (
-            <aside className="flex w-full shrink-0 flex-col overflow-hidden rounded-xl border border-ink-200 bg-white shadow-card lg:w-[268px]">
-              <div className="flex items-center gap-2 border-b border-ink-100 px-3 py-2.5">
-                <Blocks className="size-4 text-brand-600" aria-hidden />
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-display text-[15px] font-semibold text-ink-900">
-                    Blocks
-                  </h3>
-                  <p className="text-[11px] text-ink-400">Click to add · drag to place</p>
-                </div>
-              </div>
-              <div className="thin-scroll max-h-[62vh] flex-1 overflow-y-auto">
-                {MB_CATEGORY_ORDER.map((category) => (
-                  <PaletteGroup
-                    key={category}
-                    category={category}
-                    open={openCats.includes(category)}
-                    onToggle={() =>
-                      setOpenCats((open) =>
-                        open.includes(category)
-                          ? open.filter((c) => c !== category)
-                          : [...open, category],
-                      )
-                    }
-                    onAdd={addEntry}
-                  />
-                ))}
-              </div>
-            </aside>
+            <Palette active={activeCat} onSelect={setActiveCat} onAdd={addEntry} />
           )}
 
           <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-xl border border-ink-200 bg-white shadow-card">
@@ -2293,16 +2563,18 @@ export function BlockEditor({
               </Chip>
             </div>
 
+            {/* Blocks keep their natural width; at 375px the canvas scrolls
+                sideways rather than squashing them out of shape. */}
             <div
               ref={setCanvasRef}
               className={cn(
-                "thin-scroll max-h-[62vh] min-h-80 flex-1 space-y-3 overflow-y-auto bg-ink-50 p-4",
+                "thin-scroll max-h-[62vh] min-h-80 flex-1 overflow-auto bg-ink-50 p-4 pt-1",
                 "[background-image:radial-gradient(var(--color-ink-200)_1px,transparent_1px)] [background-size:18px_18px]",
                 canvasOver && "ring-2 ring-brand-500 ring-inset",
               )}
             >
               {program.events.length === 0 ? (
-                <div className="flex h-full min-h-64 flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed border-ink-300 bg-white/70 p-6 text-center">
+                <div className="mt-3 flex h-full min-h-64 flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-ink-300 bg-white/70 p-6 text-center">
                   <Power className="size-7 text-ink-300" aria-hidden />
                   <p className="max-w-sm text-[14px] text-ink-500">
                     Every micro:bit program starts with a hat block. Click one in{" "}
@@ -2311,7 +2583,7 @@ export function BlockEditor({
                     it here.
                   </p>
                   {!readOnly && (
-                    <div className="flex flex-wrap justify-center gap-2">
+                    <div className="flex flex-wrap items-start justify-center gap-3">
                       {MB_PALETTE_BY_CATEGORY.basic
                         .filter((entry) => entry.shape === "hat")
                         .map((entry) => (
@@ -2319,12 +2591,9 @@ export function BlockEditor({
                             key={entry.kind}
                             type="button"
                             onClick={() => addEntry(entry)}
-                            className={cn(
-                              "cursor-pointer rounded-lg rounded-t-[16px] px-3.5 py-2 text-[14px] font-semibold shadow-card transition hover:brightness-110",
-                              entry.colour,
-                            )}
+                            className="w-[136px] cursor-pointer transition-transform hover:-translate-y-px"
                           >
-                            {entry.label}
+                            <MiniBlock entry={entry} />
                           </button>
                         ))}
                     </div>
@@ -2351,21 +2620,17 @@ export function BlockEditor({
 
         <DragOverlay dropAnimation={null}>
           {dragEntry && (
-            <span
-              className={cn(
-                "inline-block rounded-lg px-3 py-2 text-[14px] font-semibold shadow-pop",
-                dragEntry.colour,
-              )}
-            >
-              {dragEntry.label}
+            <span className="block w-[168px] drop-shadow-lg">
+              <MiniBlock entry={dragEntry} />
             </span>
           )}
           {draggedStatement && (
             <span
-              className={cn(
-                "inline-block rounded-lg px-3 py-2 text-[14px] font-semibold shadow-pop",
-                MB_CATEGORIES[MB_STATEMENT_CATEGORY[draggedStatement.kind]].face,
-              )}
+              className="inline-flex min-h-8 items-center rounded-[4px] px-2.5 text-[13.5px] font-semibold whitespace-nowrap text-white shadow-pop"
+              style={{
+                background: MB_CATEGORIES[MB_STATEMENT_CATEGORY[draggedStatement.kind]].hex,
+                textShadow: TEXT_SHADOW,
+              }}
             >
               {mbStatementText(draggedStatement)}
             </span>

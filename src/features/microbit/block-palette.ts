@@ -12,9 +12,11 @@ import type {
  * platform = one entry here (plus, if it is a new statement kind, a case in
  * StatementFields).
  *
- * Categories, order and colours follow MakeCode so a block a student drags on
- * screen looks like the block printed in the book. Faces are contrast-checked
- * against their text colour (>= 4.5:1) — these are read from the back of a room.
+ * Categories, order and colours are MakeCode's own, so a block a student drags
+ * on screen is the block printed in the book — same hue, same order in the
+ * palette. Block words are white on every face, as MakeCode has them; the
+ * editor adds a hair of text shadow so the lighter greens still read from the
+ * back of a room.
  */
 
 // ── Categories ──────────────────────────────────────────────────────────────
@@ -22,57 +24,78 @@ import type {
 export type MbCategory =
   | "basic"
   | "input"
+  | "music"
   | "led"
   | "loops"
   | "logic"
   | "variables"
-  | "sensors"
-  | "music";
+  | "math"
+  | "sensors";
 
 export interface MbCategoryMeta {
   id: MbCategory;
   label: string;
-  /** Block background only — also used for the puzzle tab under a block. */
-  bg: string;
-  /** Text colour that sits on `bg`. */
-  text: string;
-  /** Both together: the "colour class" of a block face. */
+  /**
+   * MakeCode's own block colour, verbatim. The exact hue is the point: the
+   * student is comparing what is on screen with a printed screenshot, so these
+   * are literal hexes applied inline, never design tokens that "look close".
+   */
+  hex: string;
+  /** A pale wash of `hex` — palette flyout behind that category's blocks. */
+  tint: string;
+  /** The block face. Same as `hex`; named for what it is at the call site. */
   face: string;
-  /** Solid swatch — palette dot, nesting rail, drag preview. */
+  /** Alias of `face`, for call sites that read a background. */
+  bg: string;
+  /** A darker edge of the face — rails, notch shadows, borders. */
   accent: string;
-  /** Soft tint — palette group header. */
+  /** Pale wash, for flyout and drop-target backgrounds. */
   soft: string;
 }
 
-const meta = (
-  id: MbCategory,
-  label: string,
-  bg: string,
-  text: string,
-  accent: string,
-  soft: string,
-): MbCategoryMeta => ({ id, label, bg, text, face: `${bg} ${text}`, accent, soft });
+/** Mix `hex` towards white (255) or black (0) — used only for chrome, never a block face. */
+function shade(hex: string, amount: number, towards: 0 | 255): string {
+  const n = Number.parseInt(hex.slice(1), 16);
+  return `#${[n >> 16, (n >> 8) & 255, n & 255]
+    .map((c) => Math.round(c + (towards - c) * amount))
+    .map((c) => c.toString(16).padStart(2, "0"))
+    .join("")}`;
+}
+
+const meta = (id: MbCategory, label: string, hex: string): MbCategoryMeta => ({
+  id,
+  label,
+  hex,
+  tint: shade(hex, 0.92, 255),
+  face: hex,
+  bg: hex,
+  accent: shade(hex, 0.25, 0),
+  soft: shade(hex, 0.9, 255),
+});
 
 export const MB_CATEGORIES: Record<MbCategory, MbCategoryMeta> = {
-  basic: meta("basic", "Basic", "bg-violet-700", "text-white", "bg-violet-500", "bg-violet-100 text-violet-700"),
-  input: meta("input", "Input", "bg-signal-700", "text-white", "bg-signal-500", "bg-signal-100 text-signal-700"),
-  led: meta("led", "LED", "bg-brand-600", "text-white", "bg-brand-500", "bg-brand-100 text-brand-700"),
-  loops: meta("loops", "Loops", "bg-mint-700", "text-white", "bg-mint-500", "bg-mint-100 text-mint-700"),
-  logic: meta("logic", "Logic", "bg-bit-400", "text-ink-900", "bg-bit-500", "bg-bit-100 text-bit-700"),
-  variables: meta("variables", "Variables", "bg-coral-600", "text-white", "bg-coral-500", "bg-coral-100 text-coral-700"),
-  sensors: meta("sensors", "Sensors", "bg-amber-500", "text-ink-900", "bg-amber-500", "bg-amber-100 text-amber-700"),
-  music: meta("music", "Music", "bg-ink-700", "text-white", "bg-ink-500", "bg-ink-100 text-ink-600"),
+  basic: meta("basic", "Basic", "#1E90FF"),
+  input: meta("input", "Input", "#B4009E"),
+  music: meta("music", "Music", "#D83B01"),
+  led: meta("led", "Led", "#5C2D91"),
+  loops: meta("loops", "Loops", "#00A84F"),
+  logic: meta("logic", "Logic", "#00A4A6"),
+  variables: meta("variables", "Variables", "#DC143C"),
+  math: meta("math", "Math", "#712672"),
+  sensors: meta("sensors", "Sensors", "#00B294"),
 };
 
+/** The order the book's palette screenshot shows. */
 export const MB_CATEGORY_ORDER: MbCategory[] = [
   "basic",
   "input",
+  "music",
   "led",
   "loops",
   "logic",
   "variables",
+  "math",
   "sensors",
-  "music",
 ];
 
 /** Which colour a block already in the program wears. */
@@ -193,9 +216,9 @@ interface MbEntryBase {
   kind: string;
   label: string;
   category: MbCategory;
-  /** Colour class of the block face, from the category. */
+  /** The category's MakeCode hex, so a palette block is painted like the real one. */
   colour: string;
-  /** One line, student language, shown under the block in the palette. */
+  /** One line, student language, shown as the block's tooltip in the palette. */
   help: string;
 }
 
@@ -206,6 +229,8 @@ export interface MbHatEntry extends MbEntryBase {
 
 export interface MbStatementEntry extends MbEntryBase {
   shape: "statement";
+  /** C-shaped: draw the palette preview with a cavity, like repeat and if. */
+  wraps?: boolean;
   create: (ctx: MbBlockContext) => MbStatement;
 }
 
@@ -227,7 +252,7 @@ export type MbPaletteEntry =
   | MbConditionEntry;
 
 const firstVar = (ctx: MbBlockContext) => ctx.variables[0] ?? "count";
-const colourOf = (category: MbCategory) => MB_CATEGORIES[category].face;
+const colourOf = (category: MbCategory) => MB_CATEGORIES[category].hex;
 
 export const MB_PALETTE: MbPaletteEntry[] = [
   // ── Basic ────────────────────────────────────────────────────────────────
@@ -355,6 +380,7 @@ export const MB_PALETTE: MbPaletteEntry[] = [
     category: "loops",
     colour: colourOf("loops"),
     shape: "statement",
+    wraps: true,
     help: "Runs the blocks inside it a fixed number of times.",
     create: () => ({ id: mbId("st"), kind: "repeat", times: mbNum(4), body: [] }),
   },
@@ -364,6 +390,7 @@ export const MB_PALETTE: MbPaletteEntry[] = [
     category: "loops",
     colour: colourOf("loops"),
     shape: "statement",
+    wraps: true,
     help: "Counts with a variable — perfect for walking across the 25 LEDs.",
     create: () => ({
       id: mbId("st"),
@@ -380,6 +407,7 @@ export const MB_PALETTE: MbPaletteEntry[] = [
     category: "loops",
     colour: colourOf("loops"),
     shape: "statement",
+    wraps: true,
     help: "Keeps repeating for as long as the test is true.",
     create: (ctx) => ({
       id: mbId("st"),
@@ -400,6 +428,7 @@ export const MB_PALETTE: MbPaletteEntry[] = [
     category: "logic",
     colour: colourOf("logic"),
     shape: "statement",
+    wraps: true,
     help: "Runs the blocks inside only when the test is true.",
     create: (ctx) => ({
       id: mbId("st"),
@@ -418,6 +447,7 @@ export const MB_PALETTE: MbPaletteEntry[] = [
     category: "logic",
     colour: colourOf("logic"),
     shape: "statement",
+    wraps: true,
     help: "One path when the test is true, another path when it is false.",
     create: (ctx) => ({
       id: mbId("st"),
@@ -494,6 +524,26 @@ export const MB_PALETTE: MbPaletteEntry[] = [
     }),
   },
 
+  // ── Math ─────────────────────────────────────────────────────────────────
+  {
+    kind: "math-op",
+    label: "0 + 0",
+    category: "math",
+    colour: colourOf("math"),
+    shape: "value",
+    help: "Adds, takes away, multiplies or divides two numbers.",
+    create: () => ({ kind: "binop", op: "+", left: mbNum(0), right: mbNum(0) }),
+  },
+  {
+    kind: "random",
+    label: "pick random 0 to 4",
+    category: "math",
+    colour: colourOf("math"),
+    shape: "value",
+    help: "A surprise number between the two you choose — dice, games, sparkles.",
+    create: () => ({ kind: "random", min: mbNum(0), max: mbNum(4) }),
+  },
+
   // ── Sensors ──────────────────────────────────────────────────────────────
   {
     kind: "temperature",
@@ -555,6 +605,27 @@ export const MB_PALETTE_BY_CATEGORY: Record<MbCategory, MbPaletteEntry[]> =
 
 export function mbPaletteEntry(kind: string): MbPaletteEntry | undefined {
   return MB_PALETTE.find((entry) => entry.kind === kind);
+}
+
+/**
+ * The colour a value wears when it sits in another block's slot. `null` means
+ * a plain number: MakeCode draws those as a white field, not a coloured block.
+ */
+export function mbExprCategory(expr: MbExpr): MbCategory | null {
+  switch (expr.kind) {
+    case "num":
+      return null;
+    case "var":
+      return "variables";
+    case "temperature":
+    case "humidity":
+    case "light":
+      return "sensors";
+    case "random":
+      return "math";
+    case "binop":
+      return MB_MATH_OPS.includes(expr.op) ? "math" : "logic";
+  }
 }
 
 // ── Plain-language labels (aria, drag previews, teacher read-back) ──────────
