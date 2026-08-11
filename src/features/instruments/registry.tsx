@@ -2,8 +2,27 @@
 
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
-import { exercisesForLesson } from "@/features/microbit/exercises";
-import { exercisesForLesson as drawExercisesForLesson } from "@/features/draw/exercises";
+import { getLesson } from "@/content/curriculum";
+import {
+  exerciseById as microbitExerciseById,
+  exercisesForLesson,
+} from "@/features/microbit/exercises";
+import {
+  exerciseById as drawExerciseById,
+  exercisesForLesson as drawExercisesForLesson,
+} from "@/features/draw/exercises";
+import {
+  exerciseById as excelExerciseById,
+  exercisesForLesson as excelExercisesForLesson,
+} from "@/features/excel/exercises";
+import {
+  exerciseById as mbotExerciseById,
+  exercisesForLesson as mbotExercisesForLesson,
+} from "@/features/mbot/exercises";
+import {
+  exerciseById as scratchExerciseById,
+  exercisesForLesson as scratchExercisesForLesson,
+} from "@/features/scratch/exercises";
 import type { ComponentType } from "react";
 
 /**
@@ -36,6 +55,12 @@ export interface InstrumentMeta {
    * them, so the lesson player does not need to know which chapter it is in.
    */
   listExercises: (lessonId: string) => InstrumentExercise[];
+  /**
+   * The chapter's OWN exercise object for an id. Each chapter types its
+   * exercises differently, so this stays opaque here — only that chapter's
+   * studio knows how to read it.
+   */
+  resolveExercise: (id: string) => unknown;
 }
 
 export interface InstrumentExercise {
@@ -63,6 +88,21 @@ const DrawStudio = dynamic(
   { ssr: false, loading },
 );
 
+const ExcelStudio = dynamic(
+  () => import("@/features/excel/excel-studio").then((m) => m.ExcelStudio),
+  { ssr: false, loading },
+);
+
+const MbotStudio = dynamic(
+  () => import("@/features/mbot/mbot-studio").then((m) => m.MbotStudio),
+  { ssr: false, loading },
+);
+
+const ScratchStudio = dynamic(
+  () => import("@/features/scratch/scratch-studio").then((m) => m.ScratchStudio),
+  { ssr: false, loading },
+);
+
 export const INSTRUMENTS: InstrumentMeta[] = [
   {
     unitId: "g6-microbit",
@@ -79,6 +119,7 @@ export const INSTRUMENTS: InstrumentMeta[] = [
         brief: e.brief,
         href: `/microbit?exercise=${e.id}`,
       })),
+    resolveExercise: (id) => microbitExerciseById(id),
   },
   {
     unitId: "g6-cartoon",
@@ -95,6 +136,60 @@ export const INSTRUMENTS: InstrumentMeta[] = [
         brief: e.brief,
         href: `/draw?exercise=${e.id}`,
       })),
+    resolveExercise: (id) => drawExerciseById(id),
+  },
+  {
+    unitId: "g6-excel",
+    label: "Spreadsheet",
+    icon: "Table",
+    route: "/excel",
+    teachHint:
+      "Type a formula into a cell and change the numbers it depends on — the class watches the result recalculate.",
+    Component: ExcelStudio,
+    listExercises: (lessonId) =>
+      excelExercisesForLesson(lessonId).map((e) => ({
+        id: e.id,
+        title: e.title,
+        brief: e.brief,
+        href: `/excel?exercise=${e.id}`,
+      })),
+    resolveExercise: (id) => excelExerciseById(id),
+  },
+  {
+    unitId: "g6-robotics",
+    label: "mBot2 Arena",
+    icon: "Bot",
+    route: "/robot",
+    teachHint:
+      "Run the mission and point at the ultrasonic beam as the distance drops — that is why the robot stops where it does.",
+    Component: MbotStudio,
+    // The robotics exercises are keyed by the lesson's number in the chapter,
+    // not its id, so the order comes from the catalog rather than the string.
+    listExercises: (lessonId) =>
+      mbotExercisesForLesson(getLesson(lessonId)?.order ?? -1).map((e) => ({
+        id: e.id,
+        title: e.title,
+        brief: e.brief,
+        href: `/robot?exercise=${e.id}`,
+      })),
+    resolveExercise: (id) => mbotExerciseById(id),
+  },
+  {
+    unitId: "g6-scratch",
+    label: "Scratch Stage",
+    icon: "Cat",
+    route: "/scratch",
+    teachHint:
+      "Press the green flag and let the class watch the sprite follow each block, then change one number and run it again.",
+    Component: ScratchStudio,
+    listExercises: (lessonId) =>
+      scratchExercisesForLesson(lessonId).map((e) => ({
+        id: e.id,
+        title: e.title,
+        brief: e.brief,
+        href: `/scratch?exercise=${e.id}`,
+      })),
+    resolveExercise: (id) => scratchExerciseById(id),
   },
 ];
 
