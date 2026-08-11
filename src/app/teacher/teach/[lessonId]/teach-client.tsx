@@ -22,8 +22,13 @@ import {
   Timer,
   X,
 } from "lucide-react";
-import { exercisesForLesson } from "@/features/microbit/exercises";
-import { MicrobitStudio } from "@/features/microbit/microbit-studio";
+import { instrumentForUnit } from "@/features/instruments/registry";
+import * as Icons from "lucide-react";
+
+function InstrumentIcon({ name, className }: { name: string; className?: string }) {
+  const C = (Icons as unknown as Record<string, Icons.LucideIcon>)[name] ?? Icons.Wrench;
+  return <C className={className} />;
+}
 import { notFound, useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
@@ -54,10 +59,10 @@ export default function TeachModePage() {
   const [index, setIndex] = useState(0);
   const [reveal, setReveal] = useState(false);
   const [showNotes, setShowNotes] = useState(true);
-  // A live micro:bit, on top of the slide. Toggled rather than a separate page
-  // so a teacher demonstrating mid-explanation never loses their place.
+  // The chapter's instrument, on top of the slide. Toggled rather than a
+  // separate page so a demonstration mid-explanation never loses the place.
   const [showDevice, setShowDevice] = useState(false);
-  const hasMicrobit = Boolean(lesson && exercisesForLesson(lesson.id).length > 0);
+  const instrument = lesson ? instrumentForUnit(lesson.unitId) : undefined;
   const timer = useTimer();
 
   const slides: Slide[] = useMemo(() => {
@@ -172,11 +177,11 @@ export default function TeachModePage() {
                 {reveal ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
                 {reveal ? "Answers shown" : "Answers hidden"}
               </button>
-              {hasMicrobit && (
+              {instrument && (
                 <button
                   onClick={() => setShowDevice(!showDevice)}
                   aria-pressed={showDevice}
-                  title="Put a working micro:bit on the board"
+                  title={`Put a working ${instrument.label} on the board`}
                   className={cn(
                     "flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-[13px] font-semibold transition-colors",
                     showDevice
@@ -184,8 +189,8 @@ export default function TeachModePage() {
                       : "bg-white/10 text-ink-200 hover:bg-white/20",
                   )}
                 >
-                  <CircuitBoard className="size-4" />
-                  micro:bit
+                  <InstrumentIcon name={instrument.icon} className="size-4" />
+                  {instrument.label}
                 </button>
               )}
               <Button href={`/teacher/lesson/${lesson.id}`} variant="inverse" size="sm" icon={<X />}>
@@ -196,12 +201,12 @@ export default function TeachModePage() {
 
           {/* Slide area */}
           <main className="flex flex-1 items-center justify-center px-6 py-8 lg:px-16">
-            {showDevice ? (
+            {showDevice && instrument ? (
               <div className="animate-fade-up w-full max-w-6xl">
-                <MicrobitStudio className="[&_*]:!text-[13px]" />
+                <instrument.Component />
                 <p className="mt-2 text-center text-xs text-ink-500">
-                  Set the speed to Slow so the class can watch each block run ·
-                  press the micro:bit button again to return to the lesson
+                  {instrument.teachHint} · press {instrument.label} again to
+                  return to the lesson
                 </p>
               </div>
             ) : slide.isStageCover ? (

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useProgress } from "@/stores/progress-store";
 import { chapterById } from "@/content/books";
-import { exercisesForLesson } from "@/features/microbit/exercises";
+import { instrumentForUnit } from "@/features/instruments/registry";
 import { BlockRenderer, type BlockContext } from "@/features/mission/block-renderer";
 import { STAGE_META } from "@/features/mission/mission-player";
 import { PdfPageViewer } from "./pdf-page-viewer";
@@ -53,7 +53,8 @@ export function BookLessonPlayer({
   const [open, setOpen] = useState<Set<string>>(new Set());
   const anchor = lesson.bookAnchor;
   const chapter = anchor ? chapterById(anchor.chapterId) : undefined;
-  const mbExercises = exercisesForLesson(lesson.id);
+  const instrument = instrumentForUnit(lesson.unitId);
+  const mbExercises = instrument?.listExercises(lesson.id) ?? [];
   const progress = hydrated ? store.lessons[lesson.id] : undefined;
 
   // Every interactive block in the lesson, in stage order
@@ -224,13 +225,13 @@ export function BookLessonPlayer({
             {mbExercises.length > 0 && (
               <div className="mb-4">
                 <p className="mb-2.5 text-[11px] font-bold tracking-wide text-ink-400 uppercase">
-                  Build it on the micro:bit
+                  Build it on the {instrument?.label ?? "instrument"}
                 </p>
                 <div className="space-y-2">
                   {mbExercises.map((ex) => (
                     <Link
                       key={ex.id}
-                      href={`/microbit?exercise=${ex.id}`}
+                      href={ex.href}
                       className="flex items-start gap-3 rounded-xl border border-bit-300 bg-bit-50 p-3.5 transition-colors hover:border-bit-500"
                     >
                       <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-bit-100 text-bit-700">
