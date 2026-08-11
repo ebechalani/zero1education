@@ -1,4 +1,4 @@
-import { IDW_LESSONS } from "@/content/curriculum";
+import { FEATURED_LESSONS } from "@/content/curriculum";
 import {
   CLASS_TOPICS,
   ROSTER,
@@ -26,7 +26,7 @@ import type {
  */
 
 const WIRED_CLASS_ID = DEMO_CLASS.id;
-const WIRED_UNIT_ID = "g6-idw";
+const WIRED_UNIT_ID = "g6-microbit";
 const NEEDS_SUPPORT_THRESHOLD = 50;
 const HARDEST_QUESTIONS = 6;
 
@@ -77,7 +77,7 @@ function toRosterEntry(student: RosterStudent, grade: number): RosterEntry {
 
 /** Checkpoint questions across the unit, hardest first. */
 function hardestQuestions(): QuestionStat[] {
-  return IDW_LESSONS.flatMap((lesson) => {
+  return FEATURED_LESSONS.flatMap((lesson) => {
     const topicId = topicByLessonId.get(lesson.id);
     if (!topicId) return [];
     return lesson.stages

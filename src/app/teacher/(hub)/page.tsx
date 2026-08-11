@@ -44,13 +44,13 @@ export default function TeacherDashboard() {
         actions={
           <>
             <Button
-              href="/teacher/teach/g6-idw-cyber"
+              href="/teacher/teach/g6-mb-08"
               variant="secondary"
               icon={<MonitorPlay />}
             >
               Teach Mode
             </Button>
-            <Button href="/teacher/launch/g6-idw-networks" icon={<Radio />}>
+            <Button href="/teacher/launch/g6-mb-06" icon={<Radio />}>
               Launch to Class
             </Button>
           </>

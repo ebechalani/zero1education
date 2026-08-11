@@ -1,10 +1,5 @@
 import type { Lesson, Unit } from "@/types/content";
 import { CATALOG, unitById, unitsForGrade } from "./catalog";
-import { lessonSystems } from "./grade-6/idw/systems";
-import { lessonBinary } from "./grade-6/idw/binary";
-import { lessonAlgorithms } from "./grade-6/idw/algorithms";
-import { lessonNetworks } from "./grade-6/idw/networks";
-import { lessonCyber } from "./grade-6/idw/cyber";
 import { microbitLessons } from "./grade-6/microbit";
 import { excelLessons, cartoonLessons } from "./grade-6/ch2-ch3-lessons";
 import { roboticsLessons, scratchLessons } from "./grade-6/ch4-ch5-lessons";
@@ -15,14 +10,6 @@ import { anchorForLesson } from "../page-anchors";
  * by Firestore `lessons` + `units` collections behind the same signatures —
  * see docs/FIREBASE.md §7.
  */
-
-export const IDW_LESSONS: Lesson[] = [
-  lessonSystems,
-  lessonBinary,
-  lessonAlgorithms,
-  lessonNetworks,
-  lessonCyber,
-];
 
 /**
  * Lessons converted from the printed edition carry a page anchor, so the
@@ -38,9 +25,16 @@ function withBookAnchors(lessons: Lesson[]): Lesson[] {
   });
 }
 
+/**
+ * The lesson set the demo experience showcases: Chapter 1, the fully authored
+ * one. Dashboards and analytics build on this rather than naming a unit id in
+ * a dozen screens.
+ */
+export const FEATURED_LESSONS: Lesson[] = withBookAnchors(microbitLessons);
+export const FEATURED_UNIT_ID = "g6-microbit";
+
 export const ALL_LESSONS: Lesson[] = [
-  ...IDW_LESSONS,
-  ...withBookAnchors(microbitLessons),
+  ...FEATURED_LESSONS,
   ...withBookAnchors(excelLessons),
   ...withBookAnchors(cartoonLessons),
   ...withBookAnchors(roboticsLessons),

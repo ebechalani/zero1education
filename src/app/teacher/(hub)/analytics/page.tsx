@@ -15,7 +15,7 @@ import {
   strugglingStudents,
   studentTopicMastery,
 } from "@/content/demo/classroom";
-import { IDW_LESSONS } from "@/content/curriculum";
+import { FEATURED_LESSONS } from "@/content/curriculum";
 import { AlertTriangle, Award, TrendingDown } from "lucide-react";
 
 export default function AnalyticsPage() {
@@ -25,7 +25,7 @@ export default function AnalyticsPage() {
   }));
 
   // Question analysis: checkpoint questions of each lesson with seeded rates
-  const questionRows = IDW_LESSONS.flatMap((lesson, li) => {
+  const questionRows = FEATURED_LESSONS.flatMap((lesson, li) => {
     const topic = CLASS_TOPICS[li];
     return lesson.stages
       .filter((s) => s.kind === "checkpoint")

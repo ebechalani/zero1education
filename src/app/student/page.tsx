@@ -7,7 +7,7 @@ import { Chip } from "@/components/ui/chip";
 import { ProgressBits, ProgressRing } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { badgeById } from "@/content/badges";
-import { IDW_LESSONS, getUnit } from "@/content/curriculum";
+import { FEATURED_LESSONS, FEATURED_UNIT_ID, getUnit } from "@/content/curriculum";
 import { DEMO_ANNOUNCEMENTS, DEMO_ASSIGNMENTS } from "@/content/demo/classroom";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useProgress, summarize } from "@/stores/progress-store";
@@ -54,11 +54,11 @@ export default function StudentDashboard() {
   }
 
   const s = summarize(state);
-  const unit = getUnit("g6-idw")!;
+  const unit = getUnit(FEATURED_UNIT_ID)!;
 
   // Current mission = first published lesson not yet completed
   const currentLesson =
-    IDW_LESSONS.find((l) => !state.lessons[l.id]?.completedAt) ?? IDW_LESSONS[0];
+    FEATURED_LESSONS.find((l) => !state.lessons[l.id]?.completedAt) ?? FEATURED_LESSONS[0];
   const currentProgress = state.lessons[currentLesson.id];
   const stagePct = currentProgress
     ? (currentProgress.stagesDone.length / currentLesson.stages.length) * 100
@@ -67,7 +67,7 @@ export default function StudentDashboard() {
     currentLesson.stages.find(
       (st) => !currentProgress?.stagesDone.includes(st.id),
     ) ?? currentLesson.stages[0];
-  const unitDone = IDW_LESSONS.filter((l) => state.lessons[l.id]?.completedAt).length;
+  const unitDone = FEATURED_LESSONS.filter((l) => state.lessons[l.id]?.completedAt).length;
 
   const recentBadges = Object.entries(state.badges)
     .sort((a, b) => b[1].localeCompare(a[1]))
@@ -151,7 +151,7 @@ export default function StudentDashboard() {
               </Link>
             </div>
             <div className="divide-y divide-ink-50">
-              {IDW_LESSONS.map((l) => {
+              {FEATURED_LESSONS.map((l) => {
                 const p = state.lessons[l.id];
                 const done = Boolean(p?.completedAt);
                 const started = Boolean(p?.startedAt);

@@ -1,11 +1,11 @@
 import type { Unit } from "@/types/content";
 
 /**
- * The real ZERO1 curriculum catalog — Grade 0 (KG) through Grade 12.
- * Book units mirror the printed 2023 edition (chapter structure extracted from
- * the author's originals). The Grade 6 "Inside the Digital World" unit is the
- * first fully interactive ZERO1 unit; book units are progressively converted
- * into missions through ZERO1 Studio.
+ * The real ZERO1 curriculum catalog — Grade 0 (KG) through Grade 12, mirroring
+ * the printed 2023 edition chapter for chapter. Grade 6 Chapter 1 is converted
+ * furthest: its ten lessons are authored as missions and anchored to the
+ * printed pages. The rest are catalogued and studiable from the book itself,
+ * and are converted progressively through ZERO1 Studio.
  */
 
 const u = (
@@ -75,15 +75,7 @@ export const CATALOG: Unit[] = [
   u(5, 5, "robotics", "Robotics", "Autonomous behaviors with sensors.", { bookRef: "G5 CH5", icon: "Bot", skillIds: ["rob-build"] }),
 
   // ── Grade 6 — ZERO1 Creator (MVP grade) ───────────────────────────────────
-  u(6, 1, "idw", "Inside the Digital World", "How computers think: systems, binary, algorithms, networks and staying safe.", {
-    source: "zero1",
-    status: "published",
-    icon: "Globe2",
-    tagline: "The flagship interactive ZERO1 unit",
-    skillIds: ["sys-hardware", "sys-io", "data-binary", "algo-sequence", "algo-selection", "net-devices", "net-internet", "cyber-phishing", "cyber-passwords"],
-    lessonIds: ["g6-idw-systems", "g6-idw-binary", "g6-idw-algorithms", "g6-idw-networks", "g6-idw-cyber"],
-  }),
-  u(6, 2, "microbit", "MakeCode for micro:bit", "Micro-controllers, IoT and the 25-LED matrix — the printed Chapter 1, lesson for lesson.", {
+  u(6, 1, "microbit", "MakeCode for micro:bit", "Micro-controllers, IoT and the 25-LED matrix — the printed Chapter 1, lesson for lesson.", {
     bookRef: "G6 CH1", icon: "CircuitBoard", status: "published",
     tagline: "Converted from the printed edition",
     skillIds: ["pc-microbit", "prog-blocks", "sys-hardware", "sys-io", "algo-iteration", "algo-selection"],
@@ -92,22 +84,22 @@ export const CATALOG: Unit[] = [
       "g6-mb-06", "g6-mb-07", "g6-mb-08", "g6-mb-09", "g6-mb-10",
     ],
   }),
-  u(6, 3, "excel", "Microsoft Excel", "Build and format tables, then calculate with formulas and the IF function.", {
+  u(6, 2, "excel", "Microsoft Excel", "Build and format tables, then calculate with formulas and the IF function.", {
     bookRef: "G6 CH2", icon: "Table", plannedLessons: 7,
     skillIds: ["data-analysis", "dl-files"],
     lessonIds: ["g6-xl-01", "g6-xl-02", "g6-xl-03", "g6-xl-04", "g6-xl-05", "g6-xl-06", "g6-xl-07"],
   }),
-  u(6, 4, "cartoon", "Cartoon Drawing", "Draw superhero characters step by step in Paint — bodies, poses and costumes.", {
+  u(6, 3, "cartoon", "Cartoon Drawing", "Draw superhero characters step by step in Paint — bodies, poses and costumes.", {
     bookRef: "G6 CH3", icon: "Brush", plannedLessons: 5,
     skillIds: ["cr-projects", "dl-files"],
     lessonIds: ["g6-ct-01", "g6-ct-02", "g6-ct-03", "g6-ct-04", "g6-ct-05"],
   }),
-  u(6, 5, "robotics", "Robotics with mBot2", "Smart bins, smart homes, autonomous driving and client counting with the CyberPi controller.", {
+  u(6, 4, "robotics", "Robotics with mBot2", "Smart bins, smart homes, autonomous driving and client counting with the CyberPi controller.", {
     bookRef: "G6 CH4", icon: "Bot", plannedLessons: 7,
     skillIds: ["rob-build", "sys-io", "prog-blocks"],
     lessonIds: ["g6-rb-01", "g6-rb-02", "g6-rb-03", "g6-rb-04", "g6-rb-05", "g6-rb-06", "g6-rb-07"],
   }),
-  u(6, 6, "scratch", "Scratch", "Stories, documentaries, animations and games built in Scratch 3.0.", {
+  u(6, 5, "scratch", "Scratch", "Stories, documentaries, animations and games built in Scratch 3.0.", {
     bookRef: "G6 CH5", icon: "Blocks", plannedLessons: 7,
     skillIds: ["prog-blocks", "algo-iteration", "cr-projects"],
     lessonIds: ["g6-sc-01", "g6-sc-02", "g6-sc-03", "g6-sc-04", "g6-sc-05", "g6-sc-06", "g6-sc-07"],

@@ -16,7 +16,7 @@ export default function StudioCurriculumPage() {
   const hydrated = useHydrated();
   const { drafts } = useStudio();
   const [openGrades, setOpenGrades] = useState<Set<string>>(new Set(["g6"]));
-  const [openUnits, setOpenUnits] = useState<Set<string>>(new Set(["g6-idw"]));
+  const [openUnits, setOpenUnits] = useState<Set<string>>(new Set(["g6-microbit"]));
 
   const toggle = (set: Set<string>, id: string, apply: (s: Set<string>) => void) => {
     const next = new Set(set);

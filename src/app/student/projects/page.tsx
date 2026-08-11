@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/layout/app-shell";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Skeleton } from "@/components/ui/skeleton";
-import { IDW_LESSONS } from "@/content/curriculum";
+import { FEATURED_LESSONS } from "@/content/curriculum";
 import { useHydrated } from "@/lib/use-hydrated";
 import { useProgress } from "@/stores/progress-store";
 import type { Project } from "@/types/content";
@@ -20,7 +20,7 @@ export default function ProjectsPage() {
   const hydrated = useHydrated();
   const { portfolio } = useProgress();
 
-  const projects: ProjectEntry[] = IDW_LESSONS.flatMap((lesson) =>
+  const projects: ProjectEntry[] = FEATURED_LESSONS.flatMap((lesson) =>
     lesson.stages.flatMap((stage) =>
       stage.blocks
         .filter((b) => b.type === "project")

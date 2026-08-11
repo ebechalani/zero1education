@@ -87,10 +87,10 @@ export default function ClassDetailPage() {
         eyebrow={<DemoChip />}
         actions={
           <>
-            <Button href="/teacher/teach/g6-idw-networks" variant="secondary" icon={<MonitorPlay />}>
+            <Button href="/teacher/teach/g6-mb-06" variant="secondary" icon={<MonitorPlay />}>
               Teach Mode
             </Button>
-            <Button href="/teacher/launch/g6-idw-networks" icon={<Radio />}>
+            <Button href="/teacher/launch/g6-mb-06" icon={<Radio />}>
               Launch activity
             </Button>
           </>

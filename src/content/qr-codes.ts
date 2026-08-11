@@ -33,30 +33,40 @@ const g6u1 = (
   label,
   kind,
   gradeId: "g6",
-  unitId: "g6-idw",
+  unitId: "g6-microbit",
   lessonId,
   ...extra,
 });
 
+/**
+ * Grade 6 Chapter 1 — MakeCode for micro:bit. Codes read grade · chapter ·
+ * lesson so a teacher can recognise one at a glance, and they never contain a
+ * document id, so the curriculum can be restructured without reprinting.
+ */
 export const QR_CODES: QrTarget[] = [
-  g6u1("g6-u1-l1", "Computer Systems — full mission", "lesson", "g6-idw-systems"),
-  g6u1("g6-u1-l1-lab", "Computer Lab — assemble the machine", "lab", "g6-idw-systems", { labId: "computer", stageId: "lab" }),
+  g6u1("g6-c1-l1", "Introduction to Microcontrollers", "lesson", "g6-mb-01"),
+  g6u1("g6-c1-l1-lab", "Computer Lab — assemble the machine", "lab", "g6-mb-01", { labId: "computer", stageId: "lab" }),
 
-  g6u1("g6-u1-l2", "Binary Numbers — full mission", "lesson", "g6-idw-binary"),
-  g6u1("g6-u1-l2-lab", "Binary Lab — the bit switchboard", "lab", "g6-idw-binary", { labId: "binary", stageId: "lab" }),
-  g6u1("g6-u1-l2-check", "Binary Numbers — checkpoint", "checkpoint", "g6-idw-binary", { stageId: "checkpoint" }),
+  g6u1("g6-c1-l2", "Defining Smart Objects & IOT", "lesson", "g6-mb-02"),
 
-  g6u1("g6-u1-l3", "Algorithms — full mission", "lesson", "g6-idw-algorithms"),
-  g6u1("g6-u1-l3-lab", "Algorithm Lab — program the rover", "lab", "g6-idw-algorithms", { labId: "algorithm", stageId: "lab" }),
-  g6u1("g6-u1-l3-challenge", "Algorithms — debugging challenge", "challenge", "g6-idw-algorithms", { stageId: "challenge" }),
+  g6u1("g6-c1-l3", "The Micro-controller & Push Buttons", "lesson", "g6-mb-03"),
 
-  g6u1("g6-u1-l4", "Networks — full mission", "lesson", "g6-idw-networks"),
-  g6u1("g6-u1-l4-lab", "Network Lab — wire the network", "lab", "g6-idw-networks", { labId: "network", stageId: "lab" }),
-  g6u1("g6-u1-l4-check", "Networks — checkpoint", "checkpoint", "g6-idw-networks", { stageId: "checkpoint" }),
+  g6u1("g6-c1-l4", "Creating a Stopwatch Using a Variable", "lesson", "g6-mb-04"),
+  g6u1("g6-c1-l4-check", "Stopwatch — checkpoint", "checkpoint", "g6-mb-04", { stageId: "checkpoint" }),
 
-  g6u1("g6-u1-l5", "Cybersecurity — full mission", "lesson", "g6-idw-cyber"),
-  g6u1("g6-u1-l5-lab", "Cyber Lab — judge the inbox", "lab", "g6-idw-cyber", { labId: "cyber", stageId: "lab" }),
-  g6u1("g6-u1-l5-check", "Cybersecurity — checkpoint", "checkpoint", "g6-idw-cyber", { stageId: "checkpoint" }),
+  g6u1("g6-c1-l5", "Creating a Project with Two Variables", "lesson", "g6-mb-05"),
+
+  g6u1("g6-c1-l6", "Controlling the LEDs of the micro:bit", "lesson", "g6-mb-06"),
+
+  g6u1("g6-c1-l7", "Integrating a Variable to Control the LEDs", "lesson", "g6-mb-07"),
+  g6u1("g6-c1-l7-lab", "Algorithm Lab — practise loops", "lab", "g6-mb-07", { labId: "algorithm", stageId: "lab" }),
+
+  g6u1("g6-c1-l8", "The Kitronik Air Quality Station", "lesson", "g6-mb-08"),
+
+  g6u1("g6-c1-l9", "Displaying Visual Warnings", "lesson", "g6-mb-09"),
+
+  g6u1("g6-c1-l10", "Evaluation Sheet", "lesson", "g6-mb-10"),
+  g6u1("g6-c1-l10-check", "Chapter 1 — test your knowledge", "checkpoint", "g6-mb-10", { stageId: "checkpoint" }),
 ];
 
 const byCode = new Map(QR_CODES.map((t) => [t.code, t]));

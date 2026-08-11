@@ -35,22 +35,22 @@ export const ROSTER: RosterStudent[] = NAMES.map(([firstName, lastName], i) => {
   };
 });
 
-/** Topics tracked for class analytics (aligned to the flagship unit). */
+/** Topics tracked for class analytics, following Grade 6 Chapter 1. */
 export const CLASS_TOPICS = [
-  { id: "systems", label: "Computer Systems", lessonId: "g6-idw-systems" },
-  { id: "binary", label: "Binary Numbers", lessonId: "g6-idw-binary" },
-  { id: "algorithms", label: "Algorithms", lessonId: "g6-idw-algorithms" },
-  { id: "networks", label: "Networks", lessonId: "g6-idw-networks" },
-  { id: "cyber", label: "Cybersecurity", lessonId: "g6-idw-cyber" },
+  { id: "micro", label: "Microcontrollers", lessonId: "g6-mb-01" },
+  { id: "iot", label: "Smart Objects & IoT", lessonId: "g6-mb-02" },
+  { id: "variables", label: "Variables", lessonId: "g6-mb-04" },
+  { id: "matrix", label: "LED Matrix", lessonId: "g6-mb-06" },
+  { id: "loops", label: "Loops", lessonId: "g6-mb-07" },
 ] as const;
 
-/** Per-topic difficulty modifier (cyber runs hardest in this class). */
+/** Per-topic difficulty modifier (loops run hardest in this class). */
 const TOPIC_DIFFICULTY: Record<string, number> = {
-  systems: 0.08,
-  binary: 0.0,
-  algorithms: -0.02,
-  networks: -0.12,
-  cyber: -0.26,
+  micro: 0.08,
+  iot: 0.0,
+  variables: -0.02,
+  matrix: -0.12,
+  loops: -0.26,
 };
 
 export function studentTopicMastery(s: RosterStudent, topicId: string): number {
@@ -109,8 +109,8 @@ export function weeklyActivity(seedKey: string, weeks = 8): number[] {
 export const DEMO_ANNOUNCEMENTS = [
   {
     id: "ann-1",
-    title: "Cyber Defender week starts Monday",
-    body: "We begin the Cybersecurity mission next week. Finish the Networks checkpoint before Friday so everyone starts together.",
+    title: "Air quality station arrives Monday",
+    body: "We start the Kitronik lessons next week. Finish the LED matrix project before Friday so everyone begins together.",
     from: "Ms. Khoury",
     date: "2026-08-06",
   },
@@ -126,16 +126,16 @@ export const DEMO_ANNOUNCEMENTS = [
 export const DEMO_ASSIGNMENTS = [
   {
     id: "asg-1",
-    title: "Networks checkpoint",
-    lessonId: "g6-idw-networks",
+    title: "LED matrix project",
+    lessonId: "g6-mb-06",
     due: "2026-08-14",
-    kind: "checkpoint" as const,
+    kind: "project" as const,
   },
   {
     id: "asg-2",
-    title: "Design your dream computer (project)",
-    lessonId: "g6-idw-systems",
+    title: "Chapter 1 evaluation sheet",
+    lessonId: "g6-mb-10",
     due: "2026-08-21",
-    kind: "project" as const,
+    kind: "checkpoint" as const,
   },
 ];

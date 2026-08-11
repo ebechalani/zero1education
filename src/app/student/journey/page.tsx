@@ -3,7 +3,7 @@
 import { PageHeader } from "@/components/layout/app-shell";
 import { Chip } from "@/components/ui/chip";
 import { Skeleton } from "@/components/ui/skeleton";
-import { IDW_LESSONS, unitsForGrade } from "@/content/curriculum";
+import { FEATURED_LESSONS, FEATURED_UNIT_ID, unitsForGrade } from "@/content/curriculum";
 import { useHydrated } from "@/lib/use-hydrated";
 import { cn } from "@/lib/utils";
 import { useProgress } from "@/stores/progress-store";
@@ -22,8 +22,8 @@ export default function JourneyPage() {
   const hydrated = useHydrated();
   const state = useProgress();
   const units = unitsForGrade(6);
-  const flagship = units.find((u) => u.id === "g6-idw")!;
-  const bookUnits = units.filter((u) => u.id !== "g6-idw");
+  const flagship = units.find((u) => u.id === FEATURED_UNIT_ID)!;
+  const bookUnits = units.filter((u) => u.id !== FEATURED_UNIT_ID);
 
   if (!hydrated) {
     return (
@@ -35,11 +35,11 @@ export default function JourneyPage() {
   }
 
   // Node states along the path
-  const nodes = IDW_LESSONS.map((lesson, i) => {
+  const nodes = FEATURED_LESSONS.map((lesson, i) => {
     const p = state.lessons[lesson.id];
     const done = Boolean(p?.completedAt);
     const prevDone =
-      i === 0 || Boolean(state.lessons[IDW_LESSONS[i - 1].id]?.completedAt);
+      i === 0 || Boolean(state.lessons[FEATURED_LESSONS[i - 1].id]?.completedAt);
     const status: "done" | "current" | "locked" = done
       ? "done"
       : prevDone
