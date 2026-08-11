@@ -128,7 +128,12 @@ export default function LibraryPage() {
               {lessons.length > 0 && (
                 <ul className="divide-y divide-ink-50 border-t border-ink-100">
                   {lessons.map((l) => {
-                    const open = l.status === "published";
+                    // A lesson opens if it has printed pages to study from,
+                    // even when its interactive version is not authored yet.
+                    const open = l.status === "published" || Boolean(l.bookAnchor);
+                    const href = l.bookAnchor
+                      ? `/library/lesson/${l.id}`
+                      : `/library/${l.id}`;
                     const inner = (
                       <>
                         <span className="tnum w-6 shrink-0 font-mono text-xs text-ink-400">
@@ -149,7 +154,8 @@ export default function LibraryPage() {
                         </span>
                         {open ? (
                           <span className="flex shrink-0 items-center gap-1 text-[13px] font-semibold text-brand-600">
-                            Read <ChevronRight className="size-3.5" />
+                            {l.bookAnchor ? "Open pages" : "Read"}
+                            <ChevronRight className="size-3.5" />
                           </span>
                         ) : (
                           <Lock className="size-3.5 shrink-0 text-ink-300" />
@@ -160,7 +166,7 @@ export default function LibraryPage() {
                       <li key={l.id}>
                         {open ? (
                           <Link
-                            href={`/library/${l.id}`}
+                            href={href}
                             className="flex items-center gap-3 px-4 py-2.5 pl-[76px] transition-colors hover:bg-brand-50/50"
                           >
                             {inner}

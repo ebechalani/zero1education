@@ -8,6 +8,7 @@ import { lessonCyber } from "./grade-6/idw/cyber";
 import { microbitLessons } from "./grade-6/microbit";
 import { excelLessons, cartoonLessons } from "./grade-6/ch2-ch3-lessons";
 import { roboticsLessons, scratchLessons } from "./grade-6/ch4-ch5-lessons";
+import { anchorForLesson } from "../page-anchors";
 
 /**
  * Content service (bundled adapter). In production these functions are backed
@@ -23,13 +24,27 @@ export const IDW_LESSONS: Lesson[] = [
   lessonCyber,
 ];
 
+/**
+ * Lessons converted from the printed edition carry a page anchor, so the
+ * platform can show the author's real pages instead of a rewrite of them.
+ * Attached here rather than typed into 36 lesson files: the anchors are
+ * derived from the chapters' page layout, and one source of truth is easier to
+ * correct than thirty-six.
+ */
+function withBookAnchors(lessons: Lesson[]): Lesson[] {
+  return lessons.map((lesson) => {
+    const bookAnchor = anchorForLesson(lesson.unitId, lesson.order);
+    return bookAnchor ? { ...lesson, bookAnchor } : lesson;
+  });
+}
+
 export const ALL_LESSONS: Lesson[] = [
   ...IDW_LESSONS,
-  ...microbitLessons,
-  ...excelLessons,
-  ...cartoonLessons,
-  ...roboticsLessons,
-  ...scratchLessons,
+  ...withBookAnchors(microbitLessons),
+  ...withBookAnchors(excelLessons),
+  ...withBookAnchors(cartoonLessons),
+  ...withBookAnchors(roboticsLessons),
+  ...withBookAnchors(scratchLessons),
 ];
 
 const lessonById = new Map(ALL_LESSONS.map((l) => [l.id, l]));

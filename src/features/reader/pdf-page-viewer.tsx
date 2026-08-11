@@ -108,6 +108,12 @@ interface PdfPageViewerProps {
   title: string;
   startPage?: number;
   onPageChange?: (p: number) => void;
+  /**
+   * Restrict navigation to [first, last] of the file. A lesson anchored to its
+   * own pages should not let a student wander into the next lesson by holding
+   * the arrow key — the chapter view is where you browse freely.
+   */
+  pageRange?: [number, number];
 }
 
 /**
@@ -138,6 +144,7 @@ function PdfDocumentView({
   title,
   startPage,
   onPageChange,
+  pageRange,
   onRetry,
 }: PdfPageViewerProps & { onRetry: () => void }) {
   const [status, setStatus] = useState<ViewerStatus>("loading");
@@ -171,13 +178,20 @@ function PdfDocumentView({
   // Held in refs so the loader never re-runs when a parent re-renders.
   const startPageRef = useRef(startPage);
   const onPageChangeRef = useRef(onPageChange);
+  const rangeRef = useRef(pageRange);
 
   const hintId = useId();
 
   useEffect(() => {
     startPageRef.current = startPage;
     onPageChangeRef.current = onPageChange;
+    rangeRef.current = pageRange;
   });
+
+  // Navigation bounds: the whole file, or just this lesson's pages.
+  const totalPages = numPages || 1;
+  const firstPage = Math.max(1, pageRange?.[0] ?? 1);
+  const lastPage = Math.min(pageRange?.[1] ?? totalPages, totalPages);
 
   useEffect(() => {
     aliveRef.current = true;
@@ -219,7 +233,13 @@ function PdfDocumentView({
         docRef.current = pdf;
         setDoc(pdf);
         setNumPages(pdf.numPages);
-        setPage(clamp(Math.round(startPageRef.current ?? 1), 1, pdf.numPages));
+        setPage(
+          clamp(
+            Math.round(startPageRef.current ?? rangeRef.current?.[0] ?? 1),
+            rangeRef.current?.[0] ?? 1,
+            Math.min(rangeRef.current?.[1] ?? pdf.numPages, pdf.numPages),
+          ),
+        );
         setStatus("ready");
       } catch (err) {
         if (cancelled || isCancellation(err)) return;
@@ -422,7 +442,7 @@ function PdfDocumentView({
     (n: number) => {
       if (numPages <= 0) return;
       setPage((prev) => {
-        const next = clamp(Math.round(n), 1, numPages);
+        const next = clamp(Math.round(n), firstPage, lastPage);
         return next === prev ? prev : next;
       });
     },

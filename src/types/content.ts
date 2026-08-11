@@ -320,6 +320,21 @@ export interface MissionStage {
   xp?: number;
 }
 
+/**
+ * Where a lesson lives in the printed edition. When present, the platform
+ * shows the author's real pages as the lesson content and attaches the
+ * activities to them, instead of rendering a rewritten version of the text.
+ */
+export interface BookAnchor {
+  /** Chapter id from content/books.ts, e.g. "g6-ch1" */
+  chapterId: string;
+  /** 1-based page positions in the PDF file (not the printed page numbers) */
+  firstPage: number;
+  lastPage: number;
+  /** The page numbers printed on the page, when they differ — for citation */
+  printedPages?: string;
+}
+
 export interface Lesson {
   id: string;
   slug: string;
@@ -337,6 +352,8 @@ export interface Lesson {
   icon?: string;
   labId?: LabId;
   status: ContentStatus;
+  /** Set when the lesson can be studied from the printed pages themselves */
+  bookAnchor?: BookAnchor;
   stages: MissionStage[];
   teacherGuide?: {
     overview: string;
