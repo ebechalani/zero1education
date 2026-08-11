@@ -648,9 +648,18 @@ const WHITE_PILL = `${PILL} h-6 bg-white px-1.5 text-ink-900 shadow-[0_1px_0_rgb
 const DARK_PILL = `${PILL} relative h-6 cursor-pointer gap-1 bg-black/20 pr-1.5 pl-2 text-white has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-white`;
 const BARE_INPUT =
   "min-w-0 border-0 bg-transparent p-0 font-mono text-[13px] font-semibold text-ink-900 outline-none placeholder:text-ink-300 disabled:text-ink-400";
-/** Invisible <select> laid over its pill, grown to a 32px touch target. */
+/**
+ * Invisible <select> laid over its pill, grown to a 32px touch target.
+ *
+ * The element is transparent but its POPUP is not: the browser paints that list
+ * with the select's own computed colours, which would otherwise inherit the
+ * white text of the block face and render white on white. So the colours are
+ * pinned here, on the select and on its options.
+ */
 const OVERLAY_SELECT =
-  "absolute inset-x-0 -inset-y-1 cursor-pointer opacity-0 disabled:cursor-default";
+  "absolute inset-x-0 -inset-y-1 cursor-pointer opacity-0 disabled:cursor-default " +
+  "bg-white text-ink-900 [&>option]:bg-white [&>option]:text-ink-900 " +
+  "[&>optgroup]:bg-white [&>optgroup]:text-ink-900";
 
 /** Typing inside a block must not reach the block's own arrow/Delete keys. */
 const stopKeys = (e: ReactKeyboardEvent) => {
