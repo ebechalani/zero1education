@@ -23,7 +23,10 @@ export function RequireRole({
   const { user } = useSession();
   const router = useRouter();
   const roles = Array.isArray(role) ? role : [role];
-  const authorized = user !== null && roles.includes(user.role);
+  // The ZERO1 author owns the whole platform and must be able to open every
+  // surface to review it — student, teacher and school views included.
+  const authorized =
+    user !== null && (user.role === "zero1_admin" || roles.includes(user.role));
 
   useEffect(() => {
     if (hydrated && !authorized) router.replace("/login");

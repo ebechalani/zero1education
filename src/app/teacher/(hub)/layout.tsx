@@ -8,6 +8,7 @@ import {
   BarChart3,
   BookOpen,
   LayoutDashboard,
+  Library,
   Users,
 } from "lucide-react";
 
@@ -15,6 +16,7 @@ const NAV: NavItem[] = [
   { href: "/teacher", label: "Dashboard", icon: LayoutDashboard },
   { href: "/teacher/classes", label: "My Classes", icon: Users },
   { href: "/teacher/curriculum", label: "Curriculum", icon: BookOpen },
+  { href: "/library", label: "Read the Book", icon: Library },
   { href: "/teacher/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
