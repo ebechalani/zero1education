@@ -2159,7 +2159,10 @@ const l6Autonomous: RbExercise = {
             direction: "forward",
             cm: n(30),
           },
-          { id: "l6-so-b4", kind: "turn", side: "right", degrees: n(90) },
+          // Left, not right: after the two right turns and the 30 cm leg the
+          // car already faces north, so a right turn sends it east into the
+          // arena edge instead of back towards O.
+          { id: "l6-so-b4", kind: "turn", side: "left", degrees: n(90) },
           {
             id: "l6-so-b5",
             kind: "move-distance",
