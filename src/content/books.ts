@@ -28,6 +28,63 @@ export interface BookChapter {
 }
 
 export const BOOK_CHAPTERS: BookChapter[] = [
+  // ── Kindergarten ──────────────────────────────────────────────────────────
+  {
+    id: "kg-ch1",
+    gradeId: "g0",
+    unitId: "g0-knowing-computer",
+    chapter: 1,
+    title: "Knowing My Computer",
+    file: "/books/grade-0/kg-ch1-computer.pdf",
+    sourceFileName: "KG_2023_CH1_knowing_my_computer.pdf",
+  },
+  {
+    id: "kg-ch2",
+    gradeId: "g0",
+    unitId: "g0-cartoon-drawing",
+    chapter: 2,
+    title: "Cartoon Drawing",
+    file: "/books/grade-0/kg-ch2-cartoon.pdf",
+    sourceFileName: "KG_2023_CH2_cartoon_drawing.pdf",
+  },
+  {
+    id: "kg-ch3",
+    gradeId: "g0",
+    unitId: "g0-keyboard",
+    chapter: 3,
+    title: "Using My Keyboard",
+    file: "/books/grade-0/kg-ch3-keyboard.pdf",
+    sourceFileName: "KG_2023_CH3_using_my_keyboard.pdf",
+  },
+  {
+    id: "kg-ch4",
+    gradeId: "g0",
+    unitId: "g0-paint",
+    chapter: 4,
+    title: "Drawing with Paint",
+    file: "/books/grade-0/kg-ch4-paint.pdf",
+    sourceFileName: "KG_2023_CH4_drawing_with_paint.pdf",
+  },
+  {
+    id: "kg-ch5",
+    gradeId: "g0",
+    unitId: "g0-algorithms",
+    chapter: 5,
+    title: "Coding with Algorithms",
+    file: "/books/grade-0/kg-ch5-algorithms.pdf",
+    sourceFileName: "KG_2023_CH5_coding_with_algorithm.pdf",
+  },
+  {
+    id: "kg-ch6",
+    gradeId: "g0",
+    unitId: "g0-scratchjr",
+    chapter: 6,
+    title: "ScratchJr",
+    file: "/books/grade-0/kg-ch6-scratchjr.pdf",
+    sourceFileName: "KG_2023_CH6_scratch_junior.pdf",
+  },
+
+  // ── Grade 6 ───────────────────────────────────────────────────────────────
   {
     id: "g6-ch1",
     gradeId: "g6",
