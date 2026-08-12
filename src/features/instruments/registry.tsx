@@ -4,6 +4,10 @@ import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getLesson } from "@/content/curriculum";
 import {
+  puzzleById as kgPuzzleById,
+  puzzlesForLesson,
+} from "@/features/kg-grid/puzzles";
+import {
   exerciseById as microbitExerciseById,
   exercisesForLesson,
 } from "@/features/microbit/exercises";
@@ -78,6 +82,11 @@ const loading = () => (
   </div>
 );
 
+const KgGridStudio = dynamic(
+  () => import("@/features/kg-grid/kg-grid-studio").then((m) => m.KgGridStudio),
+  { ssr: false, loading },
+);
+
 const MicrobitStudio = dynamic(
   () => import("@/features/microbit/microbit-studio").then((m) => m.MicrobitStudio),
   { ssr: false, loading },
@@ -104,6 +113,57 @@ const ScratchStudio = dynamic(
 );
 
 export const INSTRUMENTS: InstrumentMeta[] = [
+  {
+    unitId: "g0-knowing-computer",
+    label: "Moving the Dog",
+    icon: "Footprints",
+    route: "/kg-grid",
+    teachHint:
+      "Put one arrow up on the board and press play, so the class sees a single step before you build a whole path.",
+    Component: KgGridStudio,
+    listExercises: (lessonId) =>
+      puzzlesForLesson(lessonId).map((p) => ({
+        id: p.id,
+        title: p.title,
+        brief: p.spoken,
+        href: `/kg-grid?exercise=${p.id}`,
+      })),
+    resolveExercise: (id) => kgPuzzleById(id),
+  },
+  {
+    unitId: "g0-keyboard",
+    label: "Moving the Dog",
+    icon: "Footprints",
+    route: "/kg-grid",
+    teachHint:
+      "Play the given arrows and let the class call out where the dog will land before it gets there.",
+    Component: KgGridStudio,
+    listExercises: (lessonId) =>
+      puzzlesForLesson(lessonId).map((p) => ({
+        id: p.id,
+        title: p.title,
+        brief: p.spoken,
+        href: `/kg-grid?exercise=${p.id}`,
+      })),
+    resolveExercise: (id) => kgPuzzleById(id),
+  },
+  {
+    unitId: "g0-algorithms",
+    label: "Moving the Dog",
+    icon: "Footprints",
+    route: "/kg-grid",
+    teachHint:
+      "Build a path with the class one arrow at a time, pressing play after each, so they see the plan grow.",
+    Component: KgGridStudio,
+    listExercises: (lessonId) =>
+      puzzlesForLesson(lessonId).map((p) => ({
+        id: p.id,
+        title: p.title,
+        brief: p.spoken,
+        href: `/kg-grid?exercise=${p.id}`,
+      })),
+    resolveExercise: (id) => kgPuzzleById(id),
+  },
   {
     unitId: "g6-microbit",
     label: "micro:bit",
