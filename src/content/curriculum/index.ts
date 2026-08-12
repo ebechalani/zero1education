@@ -4,6 +4,14 @@ import { microbitLessons } from "./grade-6/microbit";
 import { excelLessons, cartoonLessons } from "./grade-6/ch2-ch3-lessons";
 import { roboticsLessons, scratchLessons } from "./grade-6/ch4-ch5-lessons";
 import { anchorForLesson } from "../page-anchors";
+import {
+  algorithmLessons,
+  cartoonLessons as kgCartoonLessons,
+  keyboardLessons,
+  knowingComputerLessons,
+  paintLessons,
+  scratchJrLessons,
+} from "./grade-0/kg-lessons";
 
 /**
  * Content service (bundled adapter). In production these functions are backed
@@ -34,6 +42,14 @@ export const FEATURED_LESSONS: Lesson[] = withBookAnchors(microbitLessons);
 export const FEATURED_UNIT_ID = "g6-microbit";
 
 export const ALL_LESSONS: Lesson[] = [
+  // Kindergarten — every lesson studiable from its printed spread
+  ...withBookAnchors(knowingComputerLessons),
+  ...withBookAnchors(kgCartoonLessons),
+  ...withBookAnchors(keyboardLessons),
+  ...withBookAnchors(paintLessons),
+  ...withBookAnchors(algorithmLessons),
+  ...withBookAnchors(scratchJrLessons),
+
   ...FEATURED_LESSONS,
   ...withBookAnchors(excelLessons),
   ...withBookAnchors(cartoonLessons),

@@ -33,12 +33,12 @@ const u = (
 
 export const CATALOG: Unit[] = [
   // ── KG (Grade 0) — ZERO1 Explorer ─────────────────────────────────────────
-  u(0, 1, "knowing-computer", "Knowing My Computer", "Meet the computer, its parts and how to use it safely.", { bookRef: "KG CH1", icon: "Monitor", skillIds: ["sys-hardware", "dl-files"] }),
-  u(0, 2, "cartoon-drawing", "Cartoon Drawing", "First creative steps with digital drawing.", { bookRef: "KG CH2", icon: "Palette", skillIds: ["cr-projects"] }),
-  u(0, 3, "keyboard", "Using My Keyboard", "Find letters and numbers and type first words.", { bookRef: "KG CH3", icon: "Keyboard", skillIds: ["dl-files"] }),
-  u(0, 4, "paint", "Drawing with Paint", "Create pictures with digital tools.", { bookRef: "KG CH4", icon: "Brush", skillIds: ["cr-projects"] }),
-  u(0, 5, "algorithms", "Coding with Algorithms", "Put steps in order — first algorithmic thinking.", { bookRef: "KG CH5", icon: "ListOrdered", skillIds: ["algo-sequence"] }),
-  u(0, 6, "scratchjr", "ScratchJr", "Make characters move with first code blocks.", { bookRef: "KG CH6", icon: "Cat", skillIds: ["prog-blocks"] }),
+  u(0, 1, "knowing-computer", "Knowing My Computer", "Meet the computer, its parts and how to use it safely.", { lessonIds: ["g0-kc-01", "g0-kc-02", "g0-kc-03", "g0-kc-04", "g0-kc-05", "g0-kc-06", "g0-kc-07"], bookRef: "KG CH1", icon: "Monitor", skillIds: ["sys-hardware", "dl-files"] }),
+  u(0, 2, "cartoon-drawing", "Cartoon Drawing", "First creative steps with digital drawing.", { lessonIds: ["g0-cd-01", "g0-cd-02", "g0-cd-03", "g0-cd-04"], bookRef: "KG CH2", icon: "Palette", skillIds: ["cr-projects"] }),
+  u(0, 3, "keyboard", "Using My Keyboard", "Find letters and numbers and type first words.", { lessonIds: ["g0-kb-01", "g0-kb-02", "g0-kb-03", "g0-kb-04", "g0-kb-05"], bookRef: "KG CH3", icon: "Keyboard", skillIds: ["dl-files"] }),
+  u(0, 4, "paint", "Drawing with Paint", "Create pictures with digital tools.", { lessonIds: ["g0-pt-01", "g0-pt-02", "g0-pt-03", "g0-pt-04", "g0-pt-05", "g0-pt-06", "g0-pt-07", "g0-pt-08"], bookRef: "KG CH4", icon: "Brush", skillIds: ["cr-projects"] }),
+  u(0, 5, "algorithms", "Coding with Algorithms", "Put steps in order — first algorithmic thinking.", { lessonIds: ["g0-al-01", "g0-al-02", "g0-al-03", "g0-al-04"], bookRef: "KG CH5", icon: "ListOrdered", skillIds: ["algo-sequence"] }),
+  u(0, 6, "scratchjr", "ScratchJr", "Make characters move with first code blocks.", { lessonIds: ["g0-sj-01", "g0-sj-02", "g0-sj-03", "g0-sj-04", "g0-sj-05"], bookRef: "KG CH6", icon: "Cat", skillIds: ["prog-blocks"] }),
 
   // ── Grade 1 ───────────────────────────────────────────────────────────────
   u(1, 1, "intro-computers", "Intro to Computers", "What computers are and what they can do.", { bookRef: "G1 CH1", icon: "Monitor", skillIds: ["sys-hardware"] }),
