@@ -12,6 +12,10 @@ import {
   paintLessons,
   scratchJrLessons,
 } from "./grade-0/kg-lessons";
+import {
+  introComputersLessons,
+  paintLessons as g1PaintLessons,
+} from "./grade-1/lessons";
 
 /**
  * Content service (bundled adapter). In production these functions are backed
@@ -49,6 +53,10 @@ export const ALL_LESSONS: Lesson[] = [
   ...withBookAnchors(paintLessons),
   ...withBookAnchors(algorithmLessons),
   ...withBookAnchors(scratchJrLessons),
+
+  // Grade 1
+  ...withBookAnchors(introComputersLessons),
+  ...withBookAnchors(g1PaintLessons),
 
   ...FEATURED_LESSONS,
   ...withBookAnchors(excelLessons),

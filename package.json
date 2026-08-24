@@ -15,7 +15,8 @@
     "seed:school": "tsx scripts/seed-school.ts",
     "set-claims": "tsx scripts/set-claims.ts",
     "firebase:deploy": "firebase deploy --only firestore:rules,firestore:indexes,storage",
-    "check:solutions": "tsx scripts/check-solutions.ts"
+    "check:solutions": "tsx scripts/check-solutions.ts",
+    "import:grade": "tsx scripts/import-grade.ts"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

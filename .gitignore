@@ -51,3 +51,10 @@ next-env.d.ts
 # Storage behind authentication instead (docs/FIREBASE.md), or place them
 # locally in public/books/ for offline review.
 public/books/**/*.pdf
+
+# Generated working files from the curriculum importer and year-plan scripts
+/plan.json
+/detail.json
+/plan.err
+/detail.err
+/imports/

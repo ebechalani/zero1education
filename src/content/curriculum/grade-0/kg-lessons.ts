@@ -17,7 +17,7 @@ import type { Lesson } from "@/types/content";
 // ------------------------------------------------------------------------
 
 export const knowingComputerChapterSummary: string =
-  "Chapter 1 is a four-year-old's first sitting at a computer: seven short lessons that name the only parts the book shows â a mouse, a laptop, a screen, a keyboard and a tablet â and then spend the rest of the chapter putting a hand on the mouse. Every lesson pairs a page of pictures with a GCompris drill (Baby mouse, Move the mouse, Click on me, Click or tap, Click and draw, Mouse click training, Complete the puzzle, Double tap or double click, Penalty kick, Baby keyboard, Numbers with dice), so the child practises moving, clicking, right-clicking, dragging, double-clicking and pressing letter and number keys. Each lesson closes with the same 'Moving the dog' grid, where the child fills empty squares with arrow moves until the dog reaches its food â the chapter's first algorithm.";
+  "Chapter 1 is a four-year-old's first sitting at a computer: seven short lessons that name the only parts the book shows — a mouse, a laptop, a screen, a keyboard and a tablet — and then spend the rest of the chapter putting a hand on the mouse. Every lesson pairs a page of pictures with a GCompris drill (Baby mouse, Move the mouse, Click on me, Click or tap, Click and draw, Mouse click training, Complete the puzzle, Double tap or double click, Penalty kick, Baby keyboard, Numbers with dice), so the child practises moving, clicking, right-clicking, dragging, double-clicking and pressing letter and number keys. Each lesson closes with the same 'Moving the dog' grid, where the child fills empty squares with arrow moves until the dog reaches its food — the chapter's first algorithm.";
 
 export const knowingComputerLessons: Lesson[] = [
   {
@@ -27,13 +27,13 @@ export const knowingComputerLessons: Lesson[] = [
     unitId: "g0-knowing-computer",
     order: 1,
     title: "Discovering the Main Parts of a Computer",
-    description: "Name the five computer parts the book shows â a mouse, a laptop, a screen, a keyboard and a tablet â then meet GCompris, the program used for every mouse activity in the chapter.",
+    description: "Name the five computer parts the book shows — a mouse, a laptop, a screen, a keyboard and a tablet — then meet GCompris, the program used for every mouse activity in the chapter.",
     objectives: [
       "Discovering the main parts of a computer",
       "Discovering the GCompris program",
       "Mastering the use of the mouse",
-      "My Computer: \"At home, I use a computer to study and to play.\" â Do you have a computer at home? Yes / No. Who uses it? Me / My parents",
-      "Knowing my computer: link each name to its picture â A Mouse, A Laptop, A Screen, A Keyboard, A Tablet",
+      "My Computer: \"At home, I use a computer to study and to play.\" — Do you have a computer at home? Yes / No. Who uses it? Me / My parents",
+      "Knowing my computer: link each name to its picture — A Mouse, A Laptop, A Screen, A Keyboard, A Tablet",
       "I draw my computer: draw a computer screen and draw a computer mouse in the empty box beside each model",
     ],
     skillIds: ["sys-hardware", "dl-files"],
@@ -54,9 +54,9 @@ export const knowingComputerLessons: Lesson[] = [
     objectives: [
       "Practicing the use of the mouse",
       "Solving a simple algorithm",
-      "Moving the mouse: \"The Baby mouse activity allows you to master the movement of the mouse in the four directions\" â click on Baby mouse, then move the computer mouse in the 4 directions to move the duck",
-      "What's behind the blocks?: \"Move the mouse over the bricks to discover the hidden animal\" â click on \"Move the mouse\", move the mouse over the green bricks, discover the hidden animal, then name the animal (A dog / A cat / A horse / A duck)",
-      "Moving the dog: \"The dog can move in 4 directions\" â â the dog moves forward, â the dog moves backward, â the dog moves down, â the dog moves up",
+      "Moving the mouse: \"The Baby mouse activity allows you to master the movement of the mouse in the four directions\" — click on Baby mouse, then move the computer mouse in the 4 directions to move the duck",
+      "What's behind the blocks?: \"Move the mouse over the bricks to discover the hidden animal\" — click on \"Move the mouse\", move the mouse over the green bricks, discover the hidden animal, then name the animal (A dog / A cat / A horse / A duck)",
+      "Moving the dog: \"The dog can move in 4 directions\" — ← the dog moves forward, → the dog moves backward, ↓ the dog moves down, ↑ the dog moves up",
       "Fill in the squares with the right moves to make the dog reach the food (one grid on each of the two pages)",
     ],
     skillIds: ["sys-hardware", "dl-files"],
@@ -77,10 +77,10 @@ export const knowingComputerLessons: Lesson[] = [
     objectives: [
       "Mastering the use of the mouse click",
       "Solving a simple algorithm",
-      "Click on me: \"The 'Click on me' activity allows you to master the click of the mouse\" â click on the fish before it shows on the screen",
+      "Click on me: \"The 'Click on me' activity allows you to master the click of the mouse\" — click on the fish before it shows on the screen",
       "Click on Click or tap, then click on the green bricks to discover the animal behind",
-      "Drawing with the mouse: \"The Click and draw activity allows you to master the click of the mouse while drawing shapes\" â click on the green dots to draw the shape",
-      "Moving the dog: the dog can move in 4 directions â fill in the squares with the right moves to make the dog reach the food",
+      "Drawing with the mouse: \"The Click and draw activity allows you to master the click of the mouse while drawing shapes\" — click on the green dots to draw the shape",
+      "Moving the dog: the dog can move in 4 directions — fill in the squares with the right moves to make the dog reach the food",
     ],
     skillIds: ["sys-hardware", "dl-files"],
     estimatedMinutes: 30,
@@ -96,14 +96,14 @@ export const knowingComputerLessons: Lesson[] = [
     unitId: "g0-knowing-computer",
     order: 4,
     title: "Left Click, Right Click",
-    description: "Learn what each mouse button does â the left button sends the fish to the lake, the right button sends the monkey to the tree â then click and drag objects onto their matching shapes.",
+    description: "Learn what each mouse button does — the left button sends the fish to the lake, the right button sends the monkey to the tree — then click and drag objects onto their matching shapes.",
     objectives: [
       "Mastering the use of the mouse click",
       "Making the difference between the left and right click",
-      "Showing the animal: \"The Click or tap activity allows you to master the click of the mouse\" â click on the green bricks to show the hidden animal",
-      "Left click, right click: click on Mouse click training â use the left button to move the fish to the lake, and use the right button to move the monkey to the tree",
-      "Completing the puzzle: \"The Complete the puzzle activity allows you master the click and drag of the mouse while matching shapes\" â move the object to its corresponding shape",
-      "Moving the dog: the dog can move in 4 directions â fill in the squares with the right moves to make the dog reach the food",
+      "Showing the animal: \"The Click or tap activity allows you to master the click of the mouse\" — click on the green bricks to show the hidden animal",
+      "Left click, right click: click on Mouse click training — use the left button to move the fish to the lake, and use the right button to move the monkey to the tree",
+      "Completing the puzzle: \"The Complete the puzzle activity allows you master the click and drag of the mouse while matching shapes\" — move the object to its corresponding shape",
+      "Moving the dog: the dog can move in 4 directions — fill in the squares with the right moves to make the dog reach the food",
     ],
     skillIds: ["sys-hardware", "dl-files"],
     estimatedMinutes: 30,
@@ -123,7 +123,7 @@ export const knowingComputerLessons: Lesson[] = [
     objectives: [
       "Mastering the use of the double click of the mouse",
       "Solving a simple algorithm",
-      "Showing the animal: \"The Double tap or double click activity allows you to master the double click of the mouse\" â click on Double tap or double click, then double click on the bricks to show the hidden animal",
+      "Showing the animal: \"The Double tap or double click activity allows you to master the double click of the mouse\" — click on Double tap or double click, then double click on the bricks to show the hidden animal",
       "Playing football: click on Penalty kick, double click on the left button where you want to kick the ball, and choose the left or right corner",
       "Exercise: \"Write the following words 3 times: mouse - screen - computer\"",
       "Mark the mouse with (1) and the keyboard with (2) on the photograph",
@@ -142,14 +142,14 @@ export const knowingComputerLessons: Lesson[] = [
     unitId: "g0-knowing-computer",
     order: 6,
     title: "The Computer Is Everywhere",
-    description: "See the five places the book shows computers at work â hotel, restaurant, airport, hospital and factory â talk about why you use one at school and at home, then press letter keys in GCompris Baby keyboard.",
+    description: "See the five places the book shows computers at work — hotel, restaurant, airport, hospital and factory — talk about why you use one at school and at home, then press letter keys in GCompris Baby keyboard.",
     objectives: [
       "Learning where a computer is used",
       "Discovering the computer keyboard keys",
       "Solving a simple algorithm",
-      "The computer is everywhere: \"Computers are used in different tasks\" â At the hotel, At the restaurant, At the airport, At the hospital, At the factory",
+      "The computer is everywhere: \"Computers are used in different tasks\" — At the hotel, At the restaurant, At the airport, At the hospital, At the factory",
       "The computer at school: Why do I use a computer at school? Why do I use a computer at home?",
-      "Typing letters: \"The Baby keyboard activity allows you to master the typing of letters using the keyboard\" â click on Baby keyboard, then press a letter on the keyboard to hear it and to print it on the screen",
+      "Typing letters: \"The Baby keyboard activity allows you to master the typing of letters using the keyboard\" — click on Baby keyboard, then press a letter on the keyboard to hear it and to print it on the screen",
     ],
     skillIds: ["sys-hardware", "dl-files"],
     estimatedMinutes: 30,
@@ -169,9 +169,9 @@ export const knowingComputerLessons: Lesson[] = [
     objectives: [
       "Mastering the use of the numerical keys of the keyboard",
       "Solving a simple algorithm",
-      "\"The Numbers with dice activity allows you to master the typing of numbers using the keyboard\" â click on Numbers with dice",
+      "\"The Numbers with dice activity allows you to master the typing of numbers using the keyboard\" — click on Numbers with dice",
       "Type the number 1 or 2 as they appear on the dice",
-      "Moving the dog: the dog can move in 4 directions â fill the squares with the correct moves to make the dog reach the food",
+      "Moving the dog: the dog can move in 4 directions — fill the squares with the correct moves to make the dog reach the food",
     ],
     skillIds: ["sys-hardware", "dl-files"],
     estimatedMinutes: 30,
@@ -187,7 +187,7 @@ export const knowingComputerLessons: Lesson[] = [
 // ------------------------------------------------------------------------
 
 export const cartoonChapterSummary: string =
-  "Chapter 2 teaches drawing before it teaches any software: four lessons that move from tracing dashed lines and joining dots, to copying a picture square by square on a lettered grid, to building whole characters out of a handful of simple shapes. Every worksheet page is followed by a page of dot paper where the child draws numbers, letters, flowers, robots, animals and cartoons, and each of those pages closes with the same instruction â practise the same drawing again in the program Paint. There is almost no text on any page: the child traces, joins, copies, builds and colours.";
+  "Chapter 2 teaches drawing before it teaches any software: four lessons that move from tracing dashed lines and joining dots, to copying a picture square by square on a lettered grid, to building whole characters out of a handful of simple shapes. Every worksheet page is followed by a page of dot paper where the child draws numbers, letters, flowers, robots, animals and cartoons, and each of those pages closes with the same instruction — practise the same drawing again in the program Paint. There is almost no text on any page: the child traces, joins, copies, builds and colours.";
 
 export const cartoonLessons: Lesson[] = [
   {
@@ -219,7 +219,7 @@ export const cartoonLessons: Lesson[] = [
     unitId: "g0-cartoon-drawing",
     order: 2,
     title: "Copying by Grid",
-    description: "Use a lettered six-row grid to finish half-drawn pictures â a castle and a waving astronaut â then copy a whole rocket-and-planet picture square by square, and build flowers and robots from simple shapes.",
+    description: "Use a lettered six-row grid to finish half-drawn pictures — a castle and a waving astronaut — then copy a whole rocket-and-planet picture square by square, and build flowers and robots from simple shapes.",
     objectives: [
       "Look at the grid drawing and try to complete the other half.",
       "Look at the grid above and try to copy it onto the second grid below. Have Fun!!",
@@ -292,18 +292,18 @@ export const keyboardChapterSummary: string =
 export const keyboardLessons: Lesson[] = [
   {
     id: "g0-kb-01",
-    slug: "my-computer-â-discovering-the-keyboard",
+    slug: "my-computer-discovering-the-keyboard",
     gradeId: "g0",
     unitId: "g0-keyboard",
     order: 1,
-    title: "My Computer â Discovering the Keyboard",
+    title: "My Computer — Discovering the Keyboard",
     description: "Name the three parts of a computer, fill in the missing letters on a picture of a QWERTY keyboard, then type single letters as they fall in GCompris.",
     objectives: [
       "Identifying the main parts of a computer",
       "Identifying the keyboard keys",
       "Using GCompris to master the keyboard",
       "Match the screen with number 1, the keyboard with number 2 and the mouse with number 3 on the picture of the computer",
-      "Look at a computer keyboard then fill in the missing letters â only Q and P (top letter row), A (home row) and Z and M (bottom row) are printed",
+      "Look at a computer keyboard then fill in the missing letters — only Q and P (top letter row), A (home row) and Z and M (bottom row) are printed",
       "Launch GCompris and click on Simple letters",
     ],
     skillIds: ["dl-files", "ct-patterns"],
@@ -315,17 +315,17 @@ export const keyboardLessons: Lesson[] = [
   },
   {
     id: "g0-kb-02",
-    slug: "typing-words-â-drawing-numbers",
+    slug: "typing-words-drawing-numbers",
     gradeId: "g0",
     unitId: "g0-keyboard",
     order: 2,
-    title: "Typing Words â Drawing Numbers",
+    title: "Typing Words — Drawing Numbers",
     description: "Move up from single letters to typing whole three-letter words, then trace the shape of a number by dragging the mouse over a trail of green dots.",
     objectives: [
       "Mastering typing word",
       "Mastering drawing numbers using GCompris",
       "Solving simple algorithm",
-      "Launch GCompris and click on Falling words, then type the whole word before it lands (joy, lie, nor, say â the counter runs 0/15)",
+      "Launch GCompris and click on Falling words, then type the whole word before it lands (joy, lie, nor, say — the counter runs 0/15)",
       "Launch GCompris, click on the Numeration category, then click on Draw numbers",
       "Move the mouse over the green dots to draw the number",
     ],
@@ -338,11 +338,11 @@ export const keyboardLessons: Lesson[] = [
   },
   {
     id: "g0-kb-03",
-    slug: "counting-numbers-â-sequence-and-ordering-numbers",
+    slug: "counting-numbers-sequence-and-ordering-numbers",
     gradeId: "g0",
     unitId: "g0-keyboard",
     order: 3,
-    title: "Counting Numbers â Sequence and Ordering Numbers",
+    title: "Counting Numbers — Sequence and Ordering Numbers",
     description: "Three GCompris number games in a row: colour the right number of circles, join the dots in number order, and drag numbers into ascending order.",
     objectives: [
       "Counting numbers using GCompris",
@@ -361,11 +361,11 @@ export const keyboardLessons: Lesson[] = [
   },
   {
     id: "g0-kb-04",
-    slug: "counting-numbers-â-visual-counting-and-finding-t",
+    slug: "counting-numbers-visual-counting-and-finding-t",
     gradeId: "g0",
     unitId: "g0-keyboard",
     order: 4,
-    title: "Counting Numbers â Visual Counting and Finding the Path",
+    title: "Counting Numbers — Visual Counting and Finding the Path",
     description: "Count objects and type the answer on the keyboard, add two small numbers by tapping circles, then decode an arrow path square by square.",
     objectives: [
       "Counting numbers using GCompris",
@@ -384,11 +384,11 @@ export const keyboardLessons: Lesson[] = [
   },
   {
     id: "g0-kb-05",
-    slug: "path-finder-â-moving-the-dog",
+    slug: "path-finder-moving-the-dog",
     gradeId: "g0",
     unitId: "g0-keyboard",
     order: 5,
-    title: "Path Finder â Moving the Dog",
+    title: "Path Finder — Moving the Dog",
     description: "A single-page closing lesson: drag the right arrow into the sequence so the penguin walks its path, then one last paper arrow-following grid.",
     objectives: [
       "Drawing a path using GCompris",
@@ -396,7 +396,7 @@ export const keyboardLessons: Lesson[] = [
       "It is now time to learn how to move the penguin on a path",
       "Launch GCompris, click on the penguin category, then on Logic, then on Path decoding",
       "Move the correct arrow to make the penguin move on its path",
-      "The dog can move in 4 directions â follow the arrows and circle the drawing the dog will reach",
+      "The dog can move in 4 directions — follow the arrows and circle the drawing the dog will reach",
     ],
     skillIds: ["dl-files", "ct-patterns"],
     estimatedMinutes: 30,
@@ -412,16 +412,16 @@ export const keyboardLessons: Lesson[] = [
 // ------------------------------------------------------------------------
 
 export const paintChapterSummary: string =
-  "Chapter 4 opens Microsoft Paint and lets the child draw. Eight lessons introduce one tool at a time â the Brush with the colour palette, the built-in Shapes gallery (line, curve, rectangle, circle and oval), the Fill-with-colour bucket, and the freehand Pen with its Size setting â and each new tool is spent immediately on a picture: a sun, a house, a car, a boat, a dog's face, an ice cream, a cake, and eight plain circles turned into eight different faces. Every lesson ends the same way, with a strip of \"ideas to get inspired\" and an empty box where the child draws the picture themselves.";
+  "Chapter 4 opens Microsoft Paint and lets the child draw. Eight lessons introduce one tool at a time — the Brush with the colour palette, the built-in Shapes gallery (line, curve, rectangle, circle and oval), the Fill-with-colour bucket, and the freehand Pen with its Size setting — and each new tool is spent immediately on a picture: a sun, a house, a car, a boat, a dog's face, an ice cream, a cake, and eight plain circles turned into eight different faces. Every lesson ends the same way, with a strip of \"ideas to get inspired\" and an empty box where the child draws the picture themselves.";
 
 export const paintLessons: Lesson[] = [
   {
     id: "g0-pt-01",
-    slug: "drawing-with-paint-â-drawing-the-sun",
+    slug: "drawing-with-paint-drawing-the-sun",
     gradeId: "g0",
     unitId: "g0-paint",
     order: 1,
-    title: "Drawing with Paint â Drawing the Sun",
+    title: "Drawing with Paint — Drawing the Sun",
     description: "Find the Paint icon, learn the two halves of its welcome screen, pick a colour, and draw a sun with the Brush.",
     objectives: [
       "Discovering the welcome screen of the Paint program",
@@ -440,11 +440,11 @@ export const paintLessons: Lesson[] = [
   },
   {
     id: "g0-pt-02",
-    slug: "drawing-shapes-â-drawing-a-house",
+    slug: "drawing-shapes-drawing-a-house",
     gradeId: "g0",
     unitId: "g0-paint",
     order: 2,
-    title: "Drawing Shapes â Drawing a House",
+    title: "Drawing Shapes — Drawing a House",
     description: "Open the Shapes gallery, draw a square, a circle, a rectangle and a curved line, then combine shapes into a house.",
     objectives: [
       "Discovering the built in shapes in Paint",
@@ -463,11 +463,11 @@ export const paintLessons: Lesson[] = [
   },
   {
     id: "g0-pt-03",
-    slug: "drawing-free-shapes-â-drawing-a-car",
+    slug: "drawing-free-shapes-drawing-a-car",
     gradeId: "g0",
     unitId: "g0-paint",
     order: 3,
-    title: "Drawing Free Shapes â Drawing a Car",
+    title: "Drawing Free Shapes — Drawing a Car",
     description: "Work with the Line shape alone: draw a stair, an ice cream, a house and a sun out of straight lines, then a car.",
     objectives: [
       "Using the line tool to draw shapes",
@@ -486,11 +486,11 @@ export const paintLessons: Lesson[] = [
   },
   {
     id: "g0-pt-04",
-    slug: "filling-in-colours-â-drawing-a-boat",
+    slug: "filling-in-colours-drawing-a-boat",
     gradeId: "g0",
     unitId: "g0-paint",
     order: 4,
-    title: "Filling in Colours â Drawing a Boat",
+    title: "Filling in Colours — Drawing a Boat",
     description: "Meet the Fill-with-colour bucket by turning an empty rectangle red, then paint a whole boat scene with filled shapes.",
     objectives: [
       "Using Paint tool to change the colour of a drawing",
@@ -509,11 +509,11 @@ export const paintLessons: Lesson[] = [
   },
   {
     id: "g0-pt-05",
-    slug: "using-the-pen-tool-â-drawing-a-dog-face",
+    slug: "using-the-pen-tool-drawing-a-dog-face",
     gradeId: "g0",
     unitId: "g0-paint",
     order: 5,
-    title: "Using the Pen Tool â Drawing a Dog Face",
+    title: "Using the Pen Tool — Drawing a Dog Face",
     description: "Choose the Pen and its line width, draw a dog's face completely freehand, then fill each part with a different colour.",
     objectives: [
       "Drawing a dog face",
@@ -532,11 +532,11 @@ export const paintLessons: Lesson[] = [
   },
   {
     id: "g0-pt-06",
-    slug: "using-the-pen-tool-â-drawing-an-ice-cream",
+    slug: "using-the-pen-tool-drawing-an-ice-cream",
     gradeId: "g0",
     unitId: "g0-paint",
     order: 6,
-    title: "Using the Pen Tool â Drawing an Ice Cream",
+    title: "Using the Pen Tool — Drawing an Ice Cream",
     description: "Build an ice cream out of stacked line-drawn bands and three overlapping ovals, colouring every part, then draw a cake.",
     objectives: [
       "Drawing an ice cream",
@@ -555,11 +555,11 @@ export const paintLessons: Lesson[] = [
   },
   {
     id: "g0-pt-07",
-    slug: "using-the-pen-â-drawing-a-house",
+    slug: "using-the-pen-drawing-a-house",
     gradeId: "g0",
     unitId: "g0-paint",
     order: 7,
-    title: "Using the Pen â Drawing a House",
+    title: "Using the Pen — Drawing a House",
     description: "An eight-step, follow-along build: line by line the child draws a house outline, its roof lines, borders, door and windows, then colours it and adds sky.",
     objectives: [
       "Discovering the steps to draw a house",
@@ -606,7 +606,7 @@ export const paintLessons: Lesson[] = [
 // ------------------------------------------------------------------------
 
 export const algorithmChapterSummary: string =
-  "Chapter 5 teaches an algorithm as an ordered list of steps, almost entirely by tapping, dragging and colouring â there is nothing for the child to read beyond the one instruction line an adult reads aloud. Four lessons work inside the free GCompris suite: copying a five-step flower drawing in Paint, decoding a row of arrow tokens to trace a penguin's path to a red flag, continuing repeating fruit patterns, assembling picture puzzles (a train from its shadows, a tangram bird), mirroring coloured squares across a grid and rebuilding a mosaic in the right order. Every lesson closes with a pencil-and-paper version printed in the book: walking a man across a 7x7 picture grid by following arrow cards, or mirroring a pattern of coloured squares.";
+  "Chapter 5 teaches an algorithm as an ordered list of steps, almost entirely by tapping, dragging and colouring — there is nothing for the child to read beyond the one instruction line an adult reads aloud. Four lessons work inside the free GCompris suite: copying a five-step flower drawing in Paint, decoding a row of arrow tokens to trace a penguin's path to a red flag, continuing repeating fruit patterns, assembling picture puzzles (a train from its shadows, a tangram bird), mirroring coloured squares across a grid and rebuilding a mosaic in the right order. Every lesson closes with a pencil-and-paper version printed in the book: walking a man across a 7x7 picture grid by following arrow cards, or mirroring a pattern of coloured squares.";
 
 export const algorithmLessons: Lesson[] = [
   {
@@ -621,7 +621,7 @@ export const algorithmLessons: Lesson[] = [
       "Discovering the steps to draw a flower",
       "Using GCompris to draw a path for the penguin",
       "Solving an algorithm",
-      "Follow the 5 numbered steps in the Paint screenshot to draw a flower â the left column of the book prints only 'Step 1.' to 'Step 5.', the pictures carry the whole instruction",
+      "Follow the 5 numbered steps in the Paint screenshot to draw a flower — the left column of the book prints only 'Step 1.' to 'Step 5.', the pictures carry the whole instruction",
       "Launch GCompris, click the penguin (Logic section), then click the 'Path decoding' activity",
       "The penguin must reach the red flag: click on the green squares on the map to draw the path of the penguin in the same order shown by the arrows",
     ],
@@ -645,7 +645,7 @@ export const algorithmLessons: Lesson[] = [
       "Using GCompris to match shapes",
       "Solving a simple algorithm",
       "Examine the first line of fruits, examine the missing fruits on the second line, then complete the missing fruits on line 2",
-      "Baby Puzzle is an activity to enhance visual matching â place each picture in its corresponding shape",
+      "Baby Puzzle is an activity to enhance visual matching — place each picture in its corresponding shape",
       "Follow the 7 arrow cards on paper and circle the drawing the man reaches",
     ],
     skillIds: ["algo-sequence", "ct-patterns"],
@@ -668,7 +668,7 @@ export const algorithmLessons: Lesson[] = [
       "Using GCompris to build a puzzle",
       "Mirror the Given image is an activity to enhance visual drawing",
       "Examine the red squares on the right table, then reproduce the same drawing on the left table",
-      "Tangram puzzle game is an activity to enhance visual matching â move the shapes to cover the grey area",
+      "Tangram puzzle game is an activity to enhance visual matching — move the shapes to cover the grey area",
       "Use a red pencil to create the mirror shape of the table on the left",
     ],
     skillIds: ["algo-sequence", "ct-patterns"],
@@ -707,7 +707,7 @@ export const algorithmLessons: Lesson[] = [
 // ------------------------------------------------------------------------
 
 export const scratchJrChapterSummary: string =
-  "Chapter 6 gives the child their first real programming environment: ScratchJr, where every block is a picture and nothing has to be read. Five lessons take them from opening the app and snapping a green flag onto a blue arrow block so the sprite TIC walks five steps, through reading TIC's square on the numbered stage grid and predicting where a short chain of move blocks will land him, to changing the background from the picture library, adding and deleting sprites, giving a sprite a speech bubble, and finishing with a soccer ball that hops five times in the gym. The ideas are sequence, step counts and run-it-and-see â all built by dragging icons into a horizontal strip.";
+  "Chapter 6 gives the child their first real programming environment: ScratchJr, where every block is a picture and nothing has to be read. Five lessons take them from opening the app and snapping a green flag onto a blue arrow block so the sprite TIC walks five steps, through reading TIC's square on the numbered stage grid and predicting where a short chain of move blocks will land him, to changing the background from the picture library, adding and deleting sprites, giving a sprite a speech bubble, and finishing with a soccer ball that hops five times in the gym. The ideas are sequence, step counts and run-it-and-see — all built by dragging icons into a horizontal strip.";
 
 export const scratchJrLessons: Lesson[] = [
   {
@@ -744,7 +744,7 @@ export const scratchJrLessons: Lesson[] = [
     objectives: [
       "Tic walking on the grid",
       "Identify the coordinates of the Sprite Tic",
-      "TIC moves on the grid â examine the position (8-11)",
+      "TIC moves on the grid — examine the position (8-11)",
       "Move the two blocks, then locate the position of TIC on the grid",
       "Project to do: build the mission, then draw the arrows in the yellow circles to show how TIC moves on the grid",
     ],
@@ -768,7 +768,7 @@ export const scratchJrLessons: Lesson[] = [
       "Ordering Tic to reach a target",
       "To change the picture of the background: click on the background button, select a picture, click on the tick, then examine the result",
       "Click on TIC and drag it to the position (3-3)",
-      "TIC must arrive at the door â the position of the door is (7-13)",
+      "TIC must arrive at the door — the position of the door is (7-13)",
       "Add the missing blocks to make TIC reach the door",
     ],
     skillIds: ["prog-blocks", "algo-sequence"],
@@ -814,7 +814,7 @@ export const scratchJrLessons: Lesson[] = [
       "Making the ball jump",
       "Tic plays soccer ball",
       "Add the ball, add the Background Gym, place Tac and the Soccer Ball",
-      "Build the mission, click on the green flag â the ball is jumping",
+      "Build the mission, click on the green flag — the ball is jumping",
       "Extra project: modify the mission to make the ball jump while moving left and right",
     ],
     skillIds: ["prog-blocks", "algo-sequence"],

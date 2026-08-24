@@ -41,8 +41,8 @@ export const CATALOG: Unit[] = [
   u(0, 6, "scratchjr", "ScratchJr", "Make characters move with first code blocks.", { lessonIds: ["g0-sj-01", "g0-sj-02", "g0-sj-03", "g0-sj-04", "g0-sj-05"], bookRef: "KG CH6", icon: "Cat", skillIds: ["prog-blocks"] }),
 
   // ── Grade 1 ───────────────────────────────────────────────────────────────
-  u(1, 1, "intro-computers", "Intro to Computers", "What computers are and what they can do.", { bookRef: "G1 CH1", icon: "Monitor", skillIds: ["sys-hardware"] }),
-  u(1, 2, "paint", "Draw with Paint", "Shapes, colors and creativity on screen.", { bookRef: "G1 CH2", icon: "Brush", skillIds: ["cr-projects"] }),
+  u(1, 1, "intro-computers", "Intro to Computers", "What computers are and what they can do.", { lessonIds: ["g1-in-01", "g1-in-02", "g1-in-03", "g1-in-04", "g1-in-05", "g1-in-06", "g1-in-07", "g1-in-08"], bookRef: "G1 CH1", icon: "Monitor", skillIds: ["sys-hardware"] }),
+  u(1, 2, "paint", "Draw with Paint", "Shapes, colors and creativity on screen.", { lessonIds: ["g1-pa-01", "g1-pa-02", "g1-pa-03", "g1-pa-04", "g1-pa-05", "g1-pa-06"], bookRef: "G1 CH2", icon: "Brush", skillIds: ["cr-projects"] }),
   u(1, 3, "algorithms", "Algorithms", "Follow and build simple step-by-step instructions.", { bookRef: "G1 CH4", icon: "ListOrdered", skillIds: ["algo-sequence"] }),
   u(1, 4, "scratchjr", "ScratchJr", "Animate stories with blocks.", { bookRef: "G1 CH5", icon: "Cat", skillIds: ["prog-blocks"] }),
 
