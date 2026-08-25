@@ -17,6 +17,8 @@
     "firebase:deploy": "firebase deploy --only firestore:rules,firestore:indexes,storage",
     "check:solutions": "tsx scripts/check-solutions.ts",
     "check:grids": "tsx scripts/check-grids.ts",
+    "check:scratchjr": "tsx scripts/check-scratchjr.ts",
+    "check:encoding": "python scripts/check-encoding.py",
     "import:grade": "tsx scripts/import-grade.ts"
   },
   "dependencies": {

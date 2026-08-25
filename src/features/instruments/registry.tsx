@@ -27,6 +27,10 @@ import {
   exerciseById as scratchExerciseById,
   exercisesForLesson as scratchExercisesForLesson,
 } from "@/features/scratch/exercises";
+import {
+  sjExerciseById,
+  sjExercisesForLesson,
+} from "@/features/scratchjr/exercises";
 import type { ComponentType } from "react";
 
 /**
@@ -112,6 +116,12 @@ const ScratchStudio = dynamic(
   { ssr: false, loading },
 );
 
+const ScratchJrStudio = dynamic(
+  () =>
+    import("@/features/scratchjr/scratchjr-studio").then((m) => m.ScratchJrStudio),
+  { ssr: false, loading },
+);
+
 /**
  * The picture-grid board, which several chapters across the early grades all
  * teach with — Kindergarten's dog and Grade 1's robot are the same apparatus a
@@ -141,6 +151,30 @@ function gridInstrument(
   };
 }
 
+/**
+ * ScratchJr, which Kindergarten, Grade 1 and Grade 2 are all taught in. Same
+ * component and same route for each; only the unit and the teacher's hint
+ * change, so those are the only arguments.
+ */
+function scratchJrInstrument(unitId: string, teachHint: string): InstrumentMeta {
+  return {
+    unitId,
+    label: "ScratchJr",
+    icon: "Cat",
+    route: "/scratchjr",
+    teachHint,
+    Component: ScratchJrStudio,
+    listExercises: (lessonId) =>
+      sjExercisesForLesson(lessonId).map((e) => ({
+        id: e.id,
+        title: e.title,
+        brief: e.brief,
+        href: `/scratchjr?exercise=${e.id}`,
+      })),
+    resolveExercise: (id) => sjExerciseById(id),
+  };
+}
+
 export const INSTRUMENTS: InstrumentMeta[] = [
   gridInstrument(
     "g0-knowing-computer",
@@ -167,13 +201,21 @@ export const INSTRUMENTS: InstrumentMeta[] = [
     "Cat Grid",
     "Face the cat the wrong way on purpose and run the class's program anyway — turn cards only make sense once a child has watched one go wrong.",
   ),
-  // Only lessons 3 and 9 of the ScratchJr chapter are grid work; the lesson
-  // panel hides itself on the eight that are project builds, which still have
-  // no instrument.
-  gridInstrument(
+
+  // ScratchJr, which three chapters are taught in — Kindergarten's, Grade 1's
+  // and Grade 2's. Grade 2's two grid lessons used to borrow the picture grid
+  // because this did not exist; they are back on the real apparatus now.
+  scratchJrInstrument(
+    "g0-scratchjr",
+    "Tap a character on the stage and let the class watch it move before any block is explained — the picture blocks make sense backwards, from what they did.",
+  ),
+  scratchJrInstrument(
+    "g1-scratchjr",
+    "Switch the grid on and count the squares out loud with the class before adding the block — the number in the white box is the count they just made.",
+  ),
+  scratchJrInstrument(
     "g2-scratchjr",
-    "Sprite Grid",
-    "Read the script aloud one block at a time and let the class call the landing square before you press play.",
+    "Put two Move Right blocks up, then replace them with a Repeat of 2 and run both — the class sees the same journey from a shorter script.",
   ),
   {
     unitId: "g6-microbit",

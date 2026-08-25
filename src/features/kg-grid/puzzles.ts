@@ -1,8 +1,5 @@
 import { GRADE_1_PUZZLES } from "./grade-1-puzzles";
-import {
-  GRADE_2_PUZZLES,
-  GRADE_2_SCRATCHJR_PUZZLES,
-} from "./grade-2-puzzles";
+import { GRADE_2_PUZZLES } from "./grade-2-puzzles";
 import { grid, type KgPuzzle } from "./grid-model";
 
 /**
@@ -196,7 +193,6 @@ export const ALL_GRID_PUZZLES: KgPuzzle[] = [
   ...KG_PUZZLES,
   ...GRADE_1_PUZZLES,
   ...GRADE_2_PUZZLES,
-  ...GRADE_2_SCRATCHJR_PUZZLES,
 ];
 
 export function puzzlesForLesson(lessonId: string): KgPuzzle[] {

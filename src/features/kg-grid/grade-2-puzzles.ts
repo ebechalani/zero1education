@@ -21,6 +21,10 @@ import { grid, type KgCell, type KgPuzzle } from "./grid-model";
  * characters with two programs on one board, which this instrument does not do
  * and which is noted rather than faked.
  *
+ * Chapter 4's two grid lessons briefly lived here too, because the ScratchJr
+ * instrument did not exist yet. It does now, and they are back on the real
+ * apparatus in `src/features/scratchjr/`.
+ *
  * Square positions vary page to page in print; these are laid out to give the
  * same journey rather than to claim pixel fidelity with a scanned page.
  */
@@ -209,51 +213,5 @@ export const GRADE_2_PUZZLES: KgPuzzle[] = [
     addressed: true,
     slots: 21,
     page: "42-43",
-  },
-];
-
-/**
- * Grade 2, Chapter 4 — the two ScratchJr lessons that are grid work.
- *
- * The book's ScratchJr grid is 20 x 15 with a sprite on a named square and a
- * row of picture blocks carrying a repeat count. That is this instrument with
- * counted cards, so those pages run here; the chapter's other eight lessons
- * are ScratchJr project builds and still have no instrument.
- */
-export const GRADE_2_SCRATCHJR_PUZZLES: KgPuzzle[] = [
-  {
-    id: "g2-sprite-read",
-    lessonId: "g2-sc-03",
-    title: "Reading a script on the grid",
-    spoken: "Watch the blocks move the cat, then tap the square it lands on.",
-    mode: "find-square",
-    width: 10,
-    height: 8,
-    cells: grid(10, 8),
-    start: { x: 1, y: 6 },
-    character: "cat",
-    facing: "right",
-    given: ["forward:3", "turn-left", "forward:2", "forward:2"],
-    relative: true,
-    addressed: true,
-    page: "48-49",
-  },
-  {
-    id: "g2-sprite-write",
-    lessonId: "g2-sc-09",
-    title: "Writing the script yourself",
-    spoken: "The square is marked. Build the blocks that take the cat there.",
-    mode: "build-path",
-    width: 10,
-    height: 8,
-    cells: grid(10, 8, { "7,1": { glyph: "star", tint: "yellow" } }),
-    start: { x: 0, y: 7 },
-    character: "cat",
-    facing: "right",
-    goal: { x: 7, y: 1 },
-    relative: true,
-    addressed: true,
-    slots: 12,
-    page: "60-61",
   },
 ];
