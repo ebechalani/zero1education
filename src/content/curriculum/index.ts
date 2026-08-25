@@ -18,6 +18,12 @@ import {
   paintLessons as g1PaintLessons,
   scratchjrLessons as g1ScratchJrLessons,
 } from "./grade-1/lessons";
+import {
+  algorithmsLessons as g2AlgorithmsLessons,
+  componentsLessons as g2ComponentsLessons,
+  roboticsLessons as g2RoboticsLessons,
+  scratchjrLessons as g2ScratchJrLessons,
+} from "./grade-2/lessons";
 
 /**
  * Content service (bundled adapter). In production these functions are backed
@@ -61,6 +67,12 @@ export const ALL_LESSONS: Lesson[] = [
   ...withBookAnchors(g1PaintLessons),
   ...withBookAnchors(g1AlgorithmsLessons),
   ...withBookAnchors(g1ScratchJrLessons),
+
+  // Grade 2
+  ...withBookAnchors(g2ComponentsLessons),
+  ...withBookAnchors(g2AlgorithmsLessons),
+  ...withBookAnchors(g2ScratchJrLessons),
+  ...withBookAnchors(g2RoboticsLessons),
 
   ...FEATURED_LESSONS,
   ...withBookAnchors(excelLessons),

@@ -1,6 +1,7 @@
 import type { BookAnchor } from "@/types/content";
 import { KG_ANCHORS } from "./kg-anchors";
 import { GRADE_1_ANCHORS } from "./anchors/grade-1";
+import { GRADE_2_ANCHORS } from "./anchors/grade-2";
 
 /**
  * Where each lesson sits in the printed PDFs.
@@ -65,7 +66,10 @@ export function anchorForLesson(
   order: number,
 ): BookAnchor | undefined {
   // Early grades' pages do not follow a rule, so their anchors are listed.
-  const listed = KG_ANCHORS[unitId]?.[order] ?? GRADE_1_ANCHORS[unitId]?.[order];
+  const listed =
+    KG_ANCHORS[unitId]?.[order] ??
+    GRADE_1_ANCHORS[unitId]?.[order] ??
+    GRADE_2_ANCHORS[unitId]?.[order];
   if (listed) return listed;
   return byUnit.get(unitId)?.get(order);
 }

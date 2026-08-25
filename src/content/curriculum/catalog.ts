@@ -47,10 +47,10 @@ export const CATALOG: Unit[] = [
   u(1, 4, "scratchjr", "ScratchJr", "Animate stories with blocks.", { lessonIds: ["g1-sc-01", "g1-sc-02", "g1-sc-03", "g1-sc-04", "g1-sc-05", "g1-sc-06"], bookRef: "G1 CH5", icon: "Cat", skillIds: ["prog-blocks"] }),
 
   // ── Grade 2 ───────────────────────────────────────────────────────────────
-  u(2, 1, "components", "Computer Components", "The parts of a computer and what each one does.", { bookRef: "G2 CH1", icon: "Cpu", skillIds: ["sys-hardware"] }),
-  u(2, 2, "algorithms", "Algorithms", "Sequences, patterns and precise instructions.", { bookRef: "G2 CH3", icon: "ListOrdered", skillIds: ["algo-sequence", "ct-patterns"] }),
-  u(2, 3, "scratchjr", "ScratchJr", "Code interactive scenes and stories.", { bookRef: "G2 CH4", icon: "Cat", skillIds: ["prog-blocks"] }),
-  u(2, 4, "robotics", "Robotics", "Meet your first robots and make them move.", { bookRef: "G2 CH5", icon: "Bot", skillIds: ["rob-build"] }),
+  u(2, 1, "components", "Computer Components", "Sort every part into what goes in, what thinks, and what comes out.", { lessonIds: ["g2-co-01", "g2-co-02", "g2-co-03", "g2-co-04", "g2-co-05"], bookRef: "G2 CH1", icon: "Cpu", skillIds: ["sys-hardware"] }),
+  u(2, 2, "algorithms", "Algorithms", "A cat on a grid, cards worth several steps, and the first if and repeat.", { lessonIds: ["g2-al-01", "g2-al-02", "g2-al-03", "g2-al-04", "g2-al-05", "g2-al-06", "g2-al-07", "g2-al-08", "g2-al-09"], bookRef: "G2 CH3", icon: "ListOrdered", skillIds: ["algo-sequence", "ct-patterns"] }),
+  u(2, 3, "scratchjr", "ScratchJr", "Triggers, sound and loops, across five projects with something to say.", { lessonIds: ["g2-sc-01", "g2-sc-02", "g2-sc-03", "g2-sc-04", "g2-sc-05", "g2-sc-06", "g2-sc-07", "g2-sc-08", "g2-sc-09", "g2-sc-10"], bookRef: "G2 CH4", icon: "Cat", skillIds: ["prog-blocks"] }),
+  u(2, 4, "robotics", "Robotics", "Real mBlock programs for a real mBot2, driven across a floor map.", { lessonIds: ["g2-ro-01", "g2-ro-02", "g2-ro-03", "g2-ro-04", "g2-ro-05", "g2-ro-06", "g2-ro-07", "g2-ro-08", "g2-ro-09"], bookRef: "G2 CH5", icon: "Bot", skillIds: ["rob-build"] }),
 
   // ── Grade 3 — ZERO1 Builder ───────────────────────────────────────────────
   u(3, 1, "scratchjr", "ScratchJr Projects", "Bigger stories and games with block coding.", { bookRef: "G3 CH1", icon: "Cat", skillIds: ["prog-blocks"] }),
