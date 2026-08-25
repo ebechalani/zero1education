@@ -4,7 +4,7 @@ import { Logo } from "@/components/brand/logo";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/empty-state";
-import { getLesson, unitById } from "@/content/curriculum";
+import { unitById } from "@/content/curriculum";
 import { cn } from "@/lib/utils";
 import * as Icons from "lucide-react";
 import { ArrowLeft, Presentation, Wrench } from "lucide-react";

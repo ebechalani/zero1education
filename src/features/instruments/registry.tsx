@@ -162,6 +162,19 @@ export const INSTRUMENTS: InstrumentMeta[] = [
     "Robot Grid",
     "On the square, write only the first four cards with the class and ask what comes next — the answer is the same four again, which is the loop the next lesson names.",
   ),
+  gridInstrument(
+    "g2-algorithms",
+    "Cat Grid",
+    "Face the cat the wrong way on purpose and run the class's program anyway — turn cards only make sense once a child has watched one go wrong.",
+  ),
+  // Only lessons 3 and 9 of the ScratchJr chapter are grid work; the lesson
+  // panel hides itself on the eight that are project builds, which still have
+  // no instrument.
+  gridInstrument(
+    "g2-scratchjr",
+    "Sprite Grid",
+    "Read the script aloud one block at a time and let the class call the landing square before you press play.",
+  ),
   {
     unitId: "g6-microbit",
     label: "micro:bit",

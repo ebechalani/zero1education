@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Not ours to lint: vendored bundles (the pdf.js worker) and the agent
+    // session artifacts. Between them they were burying the seven real
+    // findings in src under eleven thousand.
+    "public/**",
+    ".claude/**",
   ]),
 ]);
 

@@ -51,6 +51,10 @@ export const GLYPH_LABEL: Record<KgGlyph, string> = {
   sun: "sun",
   robot: "robot",
   cube: "cube",
+  plate: "plate of food",
+  monkey: "monkey",
+  balloon: "balloon",
+  bee: "bee",
 };
 
 const GLYPHS: Record<KgGlyph, React.ReactNode> = {
@@ -166,6 +170,49 @@ const GLYPHS: Record<KgGlyph, React.ReactNode> = {
       <path d="M32 60l8-16h24l8 16z" fill="#6E9BEA" />
       <circle cx="34" cy="74" r="8" fill="#2B2B33" />
       <circle cx="66" cy="74" r="8" fill="#2B2B33" />
+    </>
+  ),
+  plate: (
+    <>
+      <ellipse cx="50" cy="58" rx="34" ry="24" fill="#E8EAF0" />
+      <ellipse cx="50" cy="55" rx="25" ry="17" fill="#FFF" />
+      <ellipse cx="44" cy="52" rx="9" ry="6" fill="#E8534A" />
+      <ellipse cx="58" cy="57" rx="7" ry="5" fill="#3FA65A" />
+      <ellipse cx="52" cy="46" rx="6" ry="4" fill="#FFC24B" />
+    </>
+  ),
+  monkey: (
+    <>
+      <circle cx="26" cy="42" r="10" fill="#8A5A2B" />
+      <circle cx="74" cy="42" r="10" fill="#8A5A2B" />
+      <circle cx="26" cy="42" r="5" fill="#C98A5E" />
+      <circle cx="74" cy="42" r="5" fill="#C98A5E" />
+      <ellipse cx="50" cy="60" rx="24" ry="21" fill="#8A5A2B" />
+      <ellipse cx="50" cy="46" rx="22" ry="19" fill="#A06A33" />
+      <ellipse cx="50" cy="56" rx="16" ry="13" fill="#E3B98A" />
+      <circle cx="43" cy="45" r="3.4" fill="#2B1B0E" />
+      <circle cx="57" cy="45" r="3.4" fill="#2B1B0E" />
+      <ellipse cx="46" cy="55" rx="2" ry="2.6" fill="#2B1B0E" />
+      <ellipse cx="54" cy="55" rx="2" ry="2.6" fill="#2B1B0E" />
+      <path d="M43 62q7 5 14 0" stroke="#2B1B0E" strokeWidth="2.4" fill="none" strokeLinecap="round" />
+    </>
+  ),
+  balloon: (
+    <>
+      <path d="M50 74q-3 6 0 12" stroke="#8A8A93" strokeWidth="2.4" fill="none" />
+      <ellipse cx="50" cy="44" rx="24" ry="29" fill="#E8534A" />
+      <ellipse cx="41" cy="34" rx="7" ry="10" fill="#F58A84" />
+      <path d="M46 72h8l-4 6z" fill="#B83A32" />
+    </>
+  ),
+  bee: (
+    <>
+      <ellipse cx="34" cy="38" rx="15" ry="10" fill="#CFE8F5" opacity=".85" transform="rotate(-24 34 38)" />
+      <ellipse cx="64" cy="36" rx="15" ry="10" fill="#CFE8F5" opacity=".85" transform="rotate(20 64 36)" />
+      <ellipse cx="50" cy="56" rx="24" ry="18" fill="#FFC24B" />
+      <path d="M40 41v30M52 39v34" stroke="#2B1B0E" strokeWidth="7" />
+      <circle cx="74" cy="50" r="10" fill="#2B1B0E" />
+      <circle cx="78" cy="47" r="2.6" fill="#FFF" />
     </>
   ),
   robot: (
