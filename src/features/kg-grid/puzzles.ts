@@ -1,3 +1,4 @@
+import { GRADE_1_PUZZLES } from "./grade-1-puzzles";
 import { grid, type KgPuzzle } from "./grid-model";
 
 /**
@@ -117,7 +118,11 @@ export const KG_PUZZLES: KgPuzzle[] = [
       "4,0": { glyph: "star" },
       "0,4": { glyph: "apple" },
       "4,4": { glyph: "ball" },
-      "2,2": { glyph: "flower" },
+      // The bird sits halfway along the route and the flower at the end of it:
+      // a child who stops watching early taps the bird, which is the mistake
+      // this puzzle is for. Not a tree — on these boards a tree is a wall.
+      "2,2": { glyph: "bird" },
+      "2,4": { glyph: "flower" },
       "0,0": { glyph: "sun" },
     }),
     start: { x: 0, y: 2 },
@@ -182,10 +187,13 @@ export const KG_PUZZLES: KgPuzzle[] = [
   },
 ];
 
+/** Every board the instrument can open, across the grades that use it. */
+export const ALL_GRID_PUZZLES: KgPuzzle[] = [...KG_PUZZLES, ...GRADE_1_PUZZLES];
+
 export function puzzlesForLesson(lessonId: string): KgPuzzle[] {
-  return KG_PUZZLES.filter((p) => p.lessonId === lessonId);
+  return ALL_GRID_PUZZLES.filter((p) => p.lessonId === lessonId);
 }
 
 export function puzzleById(id: string): KgPuzzle | undefined {
-  return KG_PUZZLES.find((p) => p.id === id);
+  return ALL_GRID_PUZZLES.find((p) => p.id === id);
 }

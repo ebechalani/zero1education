@@ -112,58 +112,56 @@ const ScratchStudio = dynamic(
   { ssr: false, loading },
 );
 
+/**
+ * The picture-grid board, which several chapters across the early grades all
+ * teach with — Kindergarten's dog and Grade 1's robot are the same apparatus a
+ * year apart. Only the unit, the name on the button and the teacher's hint
+ * change, so they are the only arguments.
+ */
+function gridInstrument(
+  unitId: string,
+  label: string,
+  teachHint: string,
+): InstrumentMeta {
+  return {
+    unitId,
+    label,
+    icon: "Footprints",
+    route: "/kg-grid",
+    teachHint,
+    Component: KgGridStudio,
+    listExercises: (lessonId) =>
+      puzzlesForLesson(lessonId).map((p) => ({
+        id: p.id,
+        title: p.title,
+        brief: p.spoken,
+        href: `/kg-grid?exercise=${p.id}`,
+      })),
+    resolveExercise: (id) => kgPuzzleById(id),
+  };
+}
+
 export const INSTRUMENTS: InstrumentMeta[] = [
-  {
-    unitId: "g0-knowing-computer",
-    label: "Moving the Dog",
-    icon: "Footprints",
-    route: "/kg-grid",
-    teachHint:
-      "Put one arrow up on the board and press play, so the class sees a single step before you build a whole path.",
-    Component: KgGridStudio,
-    listExercises: (lessonId) =>
-      puzzlesForLesson(lessonId).map((p) => ({
-        id: p.id,
-        title: p.title,
-        brief: p.spoken,
-        href: `/kg-grid?exercise=${p.id}`,
-      })),
-    resolveExercise: (id) => kgPuzzleById(id),
-  },
-  {
-    unitId: "g0-keyboard",
-    label: "Moving the Dog",
-    icon: "Footprints",
-    route: "/kg-grid",
-    teachHint:
-      "Play the given arrows and let the class call out where the dog will land before it gets there.",
-    Component: KgGridStudio,
-    listExercises: (lessonId) =>
-      puzzlesForLesson(lessonId).map((p) => ({
-        id: p.id,
-        title: p.title,
-        brief: p.spoken,
-        href: `/kg-grid?exercise=${p.id}`,
-      })),
-    resolveExercise: (id) => kgPuzzleById(id),
-  },
-  {
-    unitId: "g0-algorithms",
-    label: "Moving the Dog",
-    icon: "Footprints",
-    route: "/kg-grid",
-    teachHint:
-      "Build a path with the class one arrow at a time, pressing play after each, so they see the plan grow.",
-    Component: KgGridStudio,
-    listExercises: (lessonId) =>
-      puzzlesForLesson(lessonId).map((p) => ({
-        id: p.id,
-        title: p.title,
-        brief: p.spoken,
-        href: `/kg-grid?exercise=${p.id}`,
-      })),
-    resolveExercise: (id) => kgPuzzleById(id),
-  },
+  gridInstrument(
+    "g0-knowing-computer",
+    "Moving the Dog",
+    "Put one arrow up on the board and press play, so the class sees a single step before you build a whole path.",
+  ),
+  gridInstrument(
+    "g0-keyboard",
+    "Moving the Dog",
+    "Play the given arrows and let the class call out where the dog will land before it gets there.",
+  ),
+  gridInstrument(
+    "g0-algorithms",
+    "Moving the Dog",
+    "Build a path with the class one arrow at a time, pressing play after each, so they see the plan grow.",
+  ),
+  gridInstrument(
+    "g1-algorithms",
+    "Robot Grid",
+    "On the square, write only the first four cards with the class and ask what comes next — the answer is the same four again, which is the loop the next lesson names.",
+  ),
   {
     unitId: "g6-microbit",
     label: "micro:bit",

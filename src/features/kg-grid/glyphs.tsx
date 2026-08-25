@@ -49,6 +49,8 @@ export const GLYPH_LABEL: Record<KgGlyph, string> = {
   duck: "duck",
   car: "car",
   sun: "sun",
+  robot: "robot",
+  cube: "cube",
 };
 
 const GLYPHS: Record<KgGlyph, React.ReactNode> = {
@@ -164,6 +166,30 @@ const GLYPHS: Record<KgGlyph, React.ReactNode> = {
       <path d="M32 60l8-16h24l8 16z" fill="#6E9BEA" />
       <circle cx="34" cy="74" r="8" fill="#2B2B33" />
       <circle cx="66" cy="74" r="8" fill="#2B2B33" />
+    </>
+  ),
+  robot: (
+    <>
+      <rect x="42" y="16" width="16" height="10" rx="4" fill="#8A93A6" />
+      <circle cx="50" cy="14" r="5" fill="#FFC24B" />
+      <rect x="26" y="26" width="48" height="38" rx="10" fill="#B8C0D0" />
+      <rect x="34" y="34" width="32" height="20" rx="6" fill="#2C3446" />
+      <circle cx="43" cy="44" r="4" fill="#5CD1F0" />
+      <circle cx="57" cy="44" r="4" fill="#5CD1F0" />
+      <rect x="16" y="38" width="10" height="20" rx="5" fill="#8A93A6" />
+      <rect x="74" y="38" width="10" height="20" rx="5" fill="#8A93A6" />
+      <rect x="34" y="64" width="12" height="18" rx="4" fill="#8A93A6" />
+      <rect x="54" y="64" width="12" height="18" rx="4" fill="#8A93A6" />
+    </>
+  ),
+  cube: (
+    <>
+      <path d="M50 18l28 15v34L50 82 22 67V33z" fill="#C98A3E" />
+      <path d="M50 18l28 15-28 15-28-15z" fill="#E0A55A" />
+      <path d="M50 48v34L22 67V33z" fill="#A96F2C" opacity=".55" />
+      <path d="M50 18l28 15-28 15-28-15z" fill="none" stroke="#8A5A2B" strokeWidth="2.5" />
+      <path d="M22 33v34l28 15 28-15V33" fill="none" stroke="#8A5A2B" strokeWidth="2.5" />
+      <path d="M50 48v34" stroke="#8A5A2B" strokeWidth="2.5" />
     </>
   ),
   sun: (

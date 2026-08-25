@@ -1,19 +1,19 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Glyph } from "./glyphs";
 import { KgGrid } from "./kg-grid";
-import { KG_PUZZLES, puzzleById } from "./puzzles";
+import { ALL_GRID_PUZZLES, KG_PUZZLES, puzzleById } from "./puzzles";
 import type { KgPuzzle } from "./grid-model";
 
 /**
- * The Kindergarten grid instrument.
+ * The picture-grid instrument, for Kindergarten and Grade 1.
  *
  * Deliberately plainer than the older grades' studios: no toolbar, no speed
- * control, no score. A four-year-old gets a puzzle, big arrows and a play
- * button — and a row of pictures to choose the next puzzle, because they
- * cannot read a menu.
+ * control, no code. A young child gets a board, big cards and a play button —
+ * and a row of pictures to choose the next puzzle, because they cannot read a
+ * menu.
  */
 export function KgGridStudio({
   exercise,
@@ -35,6 +35,14 @@ export function KgGridStudio({
   const [puzzle, setPuzzle] = useState<KgPuzzle>(initial ?? KG_PUZZLES[0]);
   const [done, setDone] = useState<Set<string>>(new Set());
 
+  // Only offer the boards from the grade in play: a Grade 1 child picking
+  // between their robot and a Kindergarten dog is a menu, and this picker
+  // exists precisely because they cannot read one.
+  const siblings = useMemo(() => {
+    const grade = puzzle.lessonId.split("-")[0];
+    return ALL_GRID_PUZZLES.filter((p) => p.lessonId.startsWith(`${grade}-`));
+  }, [puzzle.lessonId]);
+
   return (
     <div className={cn("space-y-5", className)}>
       <KgGrid
@@ -49,7 +57,7 @@ export function KgGridStudio({
       {/* Puzzle picker — pictures, not words */}
       <div className="rounded-2xl border-2 border-ink-100 bg-white p-3">
         <div className="flex flex-wrap justify-center gap-2.5">
-          {KG_PUZZLES.map((p, i) => {
+          {siblings.map((p, i) => {
             const active = p.id === puzzle.id;
             const solved = done.has(p.id);
             return (
@@ -62,7 +70,7 @@ export function KgGridStudio({
                   active
                     ? "border-brand-500 bg-brand-50"
                     : solved
-                      ? "border-mint-400 bg-mint-50"
+                      ? "border-mint-500 bg-mint-100"
                       : "border-ink-200 bg-white hover:border-brand-300",
                 )}
               >
