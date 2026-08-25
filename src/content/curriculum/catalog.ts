@@ -43,8 +43,8 @@ export const CATALOG: Unit[] = [
   // ── Grade 1 ───────────────────────────────────────────────────────────────
   u(1, 1, "intro-computers", "Intro to Computers", "What computers are and what they can do.", { lessonIds: ["g1-in-01", "g1-in-02", "g1-in-03", "g1-in-04", "g1-in-05", "g1-in-06", "g1-in-07", "g1-in-08"], bookRef: "G1 CH1", icon: "Monitor", skillIds: ["sys-hardware"] }),
   u(1, 2, "paint", "Draw with Paint", "Shapes, colors and creativity on screen.", { lessonIds: ["g1-pa-01", "g1-pa-02", "g1-pa-03", "g1-pa-04", "g1-pa-05", "g1-pa-06"], bookRef: "G1 CH2", icon: "Brush", skillIds: ["cr-projects"] }),
-  u(1, 3, "algorithms", "Algorithms", "Follow and build simple step-by-step instructions.", { bookRef: "G1 CH4", icon: "ListOrdered", skillIds: ["algo-sequence"] }),
-  u(1, 4, "scratchjr", "ScratchJr", "Animate stories with blocks.", { bookRef: "G1 CH5", icon: "Cat", skillIds: ["prog-blocks"] }),
+  u(1, 3, "algorithms", "Algorithms", "Follow and build simple step-by-step instructions.", { lessonIds: ["g1-al-01", "g1-al-02", "g1-al-03", "g1-al-04", "g1-al-05", "g1-al-06", "g1-al-07", "g1-al-08", "g1-al-09", "g1-al-10", "g1-al-11"], bookRef: "G1 CH4", icon: "ListOrdered", skillIds: ["algo-sequence"] }),
+  u(1, 4, "scratchjr", "ScratchJr", "Animate stories with blocks.", { lessonIds: ["g1-sc-01", "g1-sc-02", "g1-sc-03", "g1-sc-04", "g1-sc-05", "g1-sc-06"], bookRef: "G1 CH5", icon: "Cat", skillIds: ["prog-blocks"] }),
 
   // ── Grade 2 ───────────────────────────────────────────────────────────────
   u(2, 1, "components", "Computer Components", "The parts of a computer and what each one does.", { bookRef: "G2 CH1", icon: "Cpu", skillIds: ["sys-hardware"] }),

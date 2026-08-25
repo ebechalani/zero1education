@@ -13,8 +13,10 @@ import {
   scratchJrLessons,
 } from "./grade-0/kg-lessons";
 import {
+  algorithmsLessons as g1AlgorithmsLessons,
   introComputersLessons,
   paintLessons as g1PaintLessons,
+  scratchjrLessons as g1ScratchJrLessons,
 } from "./grade-1/lessons";
 
 /**
@@ -57,6 +59,8 @@ export const ALL_LESSONS: Lesson[] = [
   // Grade 1
   ...withBookAnchors(introComputersLessons),
   ...withBookAnchors(g1PaintLessons),
+  ...withBookAnchors(g1AlgorithmsLessons),
+  ...withBookAnchors(g1ScratchJrLessons),
 
   ...FEATURED_LESSONS,
   ...withBookAnchors(excelLessons),
